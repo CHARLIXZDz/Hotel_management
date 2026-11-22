@@ -156,6 +156,18 @@ export const translations = {
     adm_drag_drop: 'ກົດເພື່ອເລືອກໄຟລ໌ຮູບພາບຈາກເຄື່ອງ (PNG, JPG, WEBP)',
     adm_uploading: 'ກຳລັງອັບໂຫຼດຮູບ...',
     adm_manual_url: 'ຫຼື ໃສ່ລິ້ງ URL ຮູບພາບໂດຍກົງ (ທາງເລືອກເສີມ)',
+
+    // Trust & Social Proof
+    trust_rating_val: '4.9 / 5.0',
+    trust_rating_lbl: 'ຄະແນນຄວາມພໍໃຈຈາກຜູ້ພັກ',
+    trust_guests_val: '12,800+',
+    trust_guests_lbl: 'ຜູ້ເຂົ້າພັກທີ່ພໍໃຈ',
+    trust_guarantee_val: '100%',
+    trust_guarantee_lbl: 'ຮັບປະກັນລາຄາດີທີ່ສຸດ',
+    trust_support_val: '24/7',
+    trust_support_lbl: 'ບໍລິການລະດັບ 5 ດາວ',
+    badge_popular: '🔥 ຍອດນິຍົມ',
+    badge_limited: '⚡ ເຫຼືອພຽງ {count} ຫ້ອງສຸດທ້າຍ',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -315,6 +327,18 @@ export const translations = {
     adm_drag_drop: 'Nhấn để chọn ảnh từ máy tính của bạn (PNG, JPG, WEBP)',
     adm_uploading: 'Đang tải ảnh lên...',
     adm_manual_url: 'Hoặc dán liên kết URL ảnh (Tùy chọn thêm)',
+
+    // Trust & Social Proof
+    trust_rating_val: '4.9 / 5.0',
+    trust_rating_lbl: 'Điểm đánh giá từ khách hàng',
+    trust_guests_val: '12,800+',
+    trust_guests_lbl: 'Lượt khách lưu trú hài lòng',
+    trust_guarantee_val: '100%',
+    trust_guarantee_lbl: 'Đảm bảo giá tốt nhất',
+    trust_support_val: '24/7',
+    trust_support_lbl: 'Dịch vụ chuẩn 5 sao',
+    badge_popular: '🔥 Phổ biến nhất',
+    badge_limited: '⚡ Chỉ còn {count} phòng cuối',
   },
 
   // 3. English
@@ -474,5 +498,17 @@ export const translations = {
     adm_drag_drop: 'Click to browse images from your computer folder (PNG, JPG, WEBP)',
     adm_uploading: 'Uploading images to cloud...',
     adm_manual_url: 'Or paste external image URLs (Optional)',
+
+    // Trust & Social Proof
+    trust_rating_val: '4.9 / 5.0',
+    trust_rating_lbl: 'Guest Satisfaction Rating',
+    trust_guests_val: '12,800+',
+    trust_guests_lbl: 'Delighted Guests Served',
+    trust_guarantee_val: '100%',
+    trust_guarantee_lbl: 'Best Rate Guaranteed',
+    trust_support_val: '24/7',
+    trust_support_lbl: '5-Star Concierge Service',
+    badge_popular: '🔥 Popular Choice',
+    badge_limited: '⚡ Only {count} room(s) left',
   }
 };
