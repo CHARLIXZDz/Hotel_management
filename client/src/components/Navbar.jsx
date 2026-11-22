@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -22,6 +22,8 @@ export default function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const langRef = useRef(null);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -31,17 +33,32 @@ export default function Navbar() {
   };
 
   const languages = [
-    { code: 'vi', flag: '🇻🇳', title: 'Tiếng Việt' },
-    { code: 'en', flag: '🇬🇧', title: 'English' },
-    { code: 'th', flag: '🇹🇭', title: 'ไทย' },
+    { code: 'en', flag: '🇬🇧', label: 'English' },
+    { code: 'lo', flag: '🇱🇦', label: 'ພາສາລາວ' },
+    { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
   ];
 
+  const currentLang = languages.find((l) => l.code === language) || languages[1]; // default Lao
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setLangDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition shadow-sm">
+    <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0b1120]/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80 transition-colors shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-primary-700 to-primary-500 flex items-center justify-center text-white shadow-md shadow-primary-500/20 group-hover:scale-105 transition transform">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary-700 to-primary-500 flex items-center justify-center text-white shadow-md shadow-primary-500/20 group-hover:scale-105 transition transform">
             <Hotel className="w-6 h-6" />
           </div>
           <div>
@@ -70,43 +87,69 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* Actions: Theme Toggle, Flag-only Language Switcher, User Auth */}
+        {/* Right Section: Language Flag Button with Dropdown + Theme Switcher + Auth */}
         <div className="hidden md:flex items-center gap-3">
-          {/* Theme Switcher Button */}
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
+          {/* Flag-only Trigger Button with Exact Dropdown from Image */}
+          <div className="relative" ref={langRef}>
+            <button
+              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              className="w-11 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/90 text-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm"
+              title="Change Language"
+            >
+              <span className="leading-none">{currentLang.flag}</span>
+            </button>
 
-          {/* Flag-only Language Switcher Pill */}
-          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200/80 dark:border-slate-700">
-            {languages.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => setLanguage(l.code)}
-                title={l.title}
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-lg transition-all duration-200 ${
-                  language === l.code
-                    ? 'bg-white dark:bg-slate-700 shadow-sm scale-110 ring-1 ring-slate-200 dark:ring-slate-600'
-                    : 'opacity-50 hover:opacity-100 hover:scale-105'
-                }`}
-              >
-                <span className="leading-none">{l.flag}</span>
-              </button>
-            ))}
+            {/* Dropdown Menu (English, ພາສາລາວ, Tiếng Việt) */}
+            {langDropdownOpen && (
+              <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-[#0f172a] rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 z-50 animate-fade-in">
+                <div className="space-y-1">
+                  {languages.map((l) => {
+                    const isSelected = language === l.code;
+                    return (
+                      <button
+                        key={l.code}
+                        onClick={() => {
+                          setLanguage(l.code);
+                          setLangDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm transition text-left ${
+                          isSelected
+                            ? 'bg-slate-100 dark:bg-slate-800/90 text-emerald-600 dark:text-emerald-400 font-semibold'
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg leading-none">{l.flag}</span>
+                          <span>{l.label}</span>
+                        </div>
+                        {isSelected && (
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 flex-shrink-0"></span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
+          {/* Theme Toggle Button (Matching rounded-2xl icon style) */}
+          <button
+            onClick={toggleTheme}
+            className="w-11 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/90 text-slate-700 dark:text-emerald-400 flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Moon className="w-5 h-5 text-emerald-400 stroke-[2.2]" /> : <Sun className="w-5 h-5 text-amber-500 stroke-[2.2]" />}
+          </button>
+
+          <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
           {/* User Profile or Login */}
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2.5 py-1.5 px-3 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                className="flex items-center gap-2.5 py-1.5 px-3 rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
               >
                 <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 font-semibold flex items-center justify-center text-sm">
                   {(profile?.full_name || user.email || 'U')[0].toUpperCase()}
@@ -117,8 +160,8 @@ export default function Navbar() {
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#0f172a] rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50">
+                  <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
                     <p className="text-xs text-slate-400">{t('logged_in_as')}</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user.email}</p>
                     {isAdmin && (
@@ -131,7 +174,7 @@ export default function Navbar() {
                   <Link
                     to="/my-bookings"
                     onClick={() => setUserDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary-600 transition"
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary-600 transition"
                   >
                     <Calendar className="w-4 h-4 text-slate-400" />
                     {t('nav_my_bookings')}
@@ -141,18 +184,18 @@ export default function Navbar() {
                     <Link
                       to="/admin"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-700 transition font-medium"
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-800 transition font-medium"
                     >
                       <Shield className="w-4 h-4 text-amber-500" />
                       {t('nav_admin')}
                     </Link>
                   )}
 
-                  <div className="border-t border-slate-100 dark:border-slate-700 my-1"></div>
+                  <div className="border-t border-slate-100 dark:border-slate-800 my-1"></div>
 
                   <button
                     onClick={handleSignOut}
-                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition"
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-800 transition"
                   >
                     <LogOut className="w-4 h-4 text-red-400" />
                     {t('nav_logout')}
@@ -178,13 +221,20 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Actions & Menu Toggle */}
+        {/* Mobile Actions: Flag + Theme + Hamburger */}
         <div className="flex items-center gap-2 md:hidden">
           <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+            className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-xl flex items-center justify-center"
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <span>{currentLang.flag}</span>
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-emerald-400 flex items-center justify-center"
+          >
+            {theme === 'dark' ? <Moon className="w-4 h-4 text-emerald-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
           </button>
 
           <button
@@ -198,23 +248,25 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-3">
-          {/* Flag-only Switcher for Mobile */}
+        <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0b1120] px-4 pt-3 pb-6 space-y-3">
           <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ngôn ngữ / Language</span>
-            <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200/80 dark:border-slate-700">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">ເລືອກພາສາ / Language</span>
+            <div className="flex gap-1.5">
               {languages.map((l) => (
                 <button
                   key={l.code}
-                  onClick={() => setLanguage(l.code)}
-                  title={l.title}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xl transition-all duration-200 ${
+                  onClick={() => {
+                    setLanguage(l.code);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
                     language === l.code
-                      ? 'bg-white dark:bg-slate-700 shadow-sm scale-110 ring-1 ring-slate-200 dark:ring-slate-600'
-                      : 'opacity-50 hover:opacity-100'
+                      ? 'bg-emerald-500 text-slate-950 shadow-md font-bold'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                   }`}
                 >
-                  <span className="leading-none">{l.flag}</span>
+                  <span>{l.flag}</span>
+                  <span>{l.code.toUpperCase()}</span>
                 </button>
               ))}
             </div>

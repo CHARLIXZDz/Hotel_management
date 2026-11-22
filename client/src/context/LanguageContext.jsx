@@ -5,7 +5,7 @@ const LanguageContext = createContext({});
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguageState] = useState(() => {
-    return localStorage.getItem('language') || 'en'; // default to english or saved
+    return localStorage.getItem('language') || 'lo'; // Default to Lao
   });
 
   const setLanguage = (lang) => {
@@ -14,8 +14,8 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const t = (key, params = {}) => {
-    const langDict = translations[language] || translations.en;
-    let text = langDict[key] || translations.en[key] || key;
+    const langDict = translations[language] || translations.lo || translations.en;
+    let text = langDict[key] || translations.en?.[key] || key;
 
     // Replace dynamic placeholders like {count}, {size}, etc.
     Object.keys(params).forEach((paramKey) => {
