@@ -3,6 +3,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import DateInput from '../components/DateInput';
 import {
   Users,
   Bed,
@@ -283,12 +284,18 @@ export default function RoomDetail() {
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     {t('search_checkin')}
                   </label>
-                  <input
-                    type="date"
+                  <DateInput
                     min={new Date().toISOString().split('T')[0]}
                     value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                    onChange={(e) => {
+                      setCheckIn(e.target.value);
+                      if (e.target.value >= checkOut) {
+                        const next = new Date(e.target.value);
+                        next.setDate(next.getDate() + 1);
+                        setCheckOut(next.toISOString().split('T')[0]);
+                      }
+                    }}
+                    className="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
                   />
                 </div>
 
@@ -297,12 +304,11 @@ export default function RoomDetail() {
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     {t('search_checkout')}
                   </label>
-                  <input
-                    type="date"
+                  <DateInput
                     min={checkIn}
                     value={checkOut}
                     onChange={(e) => setCheckOut(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
                   />
                 </div>
 

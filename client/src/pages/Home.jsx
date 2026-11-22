@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import RoomCard from '../components/RoomCard';
+import DateInput from '../components/DateInput';
 import { useLanguage } from '../context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -184,8 +185,7 @@ export default function Home() {
                   <Calendar className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                   {t('search_checkin')}
                 </label>
-                <input
-                  type="date"
+                <DateInput
                   required
                   min={new Date().toISOString().split('T')[0]}
                   value={checkIn}
@@ -197,7 +197,7 @@ export default function Home() {
                       setCheckOut(next.toISOString().split('T')[0]);
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  className="w-full px-3.5 py-2.5 text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
                 />
               </div>
 
@@ -207,13 +207,12 @@ export default function Home() {
                   <Calendar className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                   {t('search_checkout')}
                 </label>
-                <input
-                  type="date"
+                <DateInput
                   required
                   min={checkIn}
                   value={checkOut}
                   onChange={(e) => setCheckOut(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  className="w-full px-3.5 py-2.5 text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
                 />
               </div>
 

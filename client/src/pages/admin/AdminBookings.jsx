@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext';
+import { formatDateDDMMYY } from '../../utils/date';
 import {
   Search,
   User,
@@ -150,7 +151,7 @@ export default function AdminBookings() {
                   <div className="flex flex-wrap items-center gap-4 mt-1 text-xs text-slate-600 dark:text-slate-400">
                     <span className="flex items-center gap-1 font-semibold text-slate-800 dark:text-slate-200">
                       <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                      {b.check_in} → {b.check_out} ({b.total_nights} {t('co_nights')})
+                      {formatDateDDMMYY(b.check_in)} → {formatDateDDMMYY(b.check_out)} ({b.total_nights} {t('co_nights')})
                     </span>
                     <span>|</span>
                     <span>{t('co_due_at_hotel')}: <strong className="text-slate-900 dark:text-white text-sm">฿{Number(b.total_price).toLocaleString()}</strong> (Pay at hotel)</span>

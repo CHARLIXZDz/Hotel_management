@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { formatDateDDMMYY } from '../utils/date';
 import {
   Calendar,
   Users,
@@ -254,11 +255,11 @@ export default function BookingCheckout() {
               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-3 text-xs text-slate-700 dark:text-slate-300">
                 <div className="flex justify-between">
                   <span className="text-slate-400">{t('search_checkin')}:</span>
-                  <span className="font-semibold">{checkIn} {t('co_checkin_time')}</span>
+                  <span className="font-semibold">{formatDateDDMMYY(checkIn)} {t('co_checkin_time')}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">{t('search_checkout')}:</span>
-                  <span className="font-semibold">{checkOut} {t('co_checkout_time')}</span>
+                  <span className="font-semibold">{formatDateDDMMYY(checkOut)} {t('co_checkout_time')}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">{t('co_duration')}</span>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext';
+import { formatDateDDMMYY } from '../../utils/date';
 import {
   CalendarCheck2,
   DollarSign,
@@ -129,7 +130,9 @@ export default function AdminDashboard() {
                     <td className="py-3 px-4 font-mono font-bold text-slate-900 dark:text-white">{b.booking_code}</td>
                     <td className="py-3 px-4">{b.guest_name}</td>
                     <td className="py-3 px-4">{b.room_types?.name}</td>
-                    <td className="py-3 px-4 text-xs">{b.check_in} → {b.check_out}</td>
+                    <td className="py-3 px-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                      {formatDateDDMMYY(b.check_in)} → {formatDateDDMMYY(b.check_out)}
+                    </td>
                     <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">฿{Number(b.total_price).toLocaleString()}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${

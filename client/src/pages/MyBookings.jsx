@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { formatDateDDMMYY } from '../utils/date';
 import {
   Calendar,
   Clock,
@@ -172,8 +173,8 @@ export default function MyBookings() {
                     </h3>
 
                     <div className="flex flex-wrap gap-y-1 gap-x-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
-                      <span>{t('search_checkin')}: <strong className="text-slate-700 dark:text-slate-200">{b.check_in}</strong></span>
-                      <span>{t('search_checkout')}: <strong className="text-slate-700 dark:text-slate-200">{b.check_out}</strong></span>
+                      <span>{t('search_checkin')}: <strong className="text-slate-700 dark:text-slate-200">{formatDateDDMMYY(b.check_in)}</strong></span>
+                      <span>{t('search_checkout')}: <strong className="text-slate-700 dark:text-slate-200">{formatDateDDMMYY(b.check_out)}</strong></span>
                       <span>({b.total_nights} {t('co_nights')}, {b.num_rooms} {t('detail_room_unit')})</span>
                     </div>
 
