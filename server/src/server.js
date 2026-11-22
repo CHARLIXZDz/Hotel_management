@@ -6,6 +6,7 @@ const roomRoutes = require('./routes/roomRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const statRoutes = require('./routes/statRoutes');
+const settingRoutes = require('./routes/settingRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/stats', statRoutes);
+app.use('/api/settings', settingRoutes);
 
 // 404 handler
 app.use((req, res) => {

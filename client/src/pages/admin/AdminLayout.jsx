@@ -14,7 +14,8 @@ import {
   Sun,
   Moon,
   LogOut,
-  Shield
+  Shield,
+  Settings
 } from 'lucide-react';
 
 export default function AdminLayout() {
@@ -89,6 +90,7 @@ export default function AdminLayout() {
     { label: t('adm_overview'), path: '/admin', icon: LayoutDashboard },
     { label: t('adm_bookings'), path: '/admin/bookings', icon: CalendarCheck2 },
     { label: t('adm_rooms'), path: '/admin/rooms', icon: BedDouble },
+    { label: t('adm_nav_settings'), path: '/admin/settings', icon: Settings },
   ];
 
   return (

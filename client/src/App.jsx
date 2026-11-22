@@ -20,6 +20,7 @@ import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminRooms from './pages/admin/AdminRooms';
 import AdminBookings from './pages/admin/AdminBookings';
+import AdminSettings from './pages/admin/AdminSettings';
 
 // Public Layout wrapper with Navbar and Footer
 function PublicLayout() {
@@ -57,6 +58,7 @@ export default function App() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="rooms" element={<AdminRooms />} />
                 <Route path="bookings" element={<AdminBookings />} />
+                <Route path="settings" element={<AdminSettings />} />
               </Route>
             </Routes>
           </Router>

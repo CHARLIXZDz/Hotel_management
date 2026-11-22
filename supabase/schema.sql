@@ -272,3 +272,21 @@ CREATE POLICY "Users can delete room images"
 ON storage.objects FOR DELETE 
 USING (bucket_id = 'room-images');
 
+-- 6. Create Hotel Settings Table (Key-Value configuration for contact channels, etc.)
+CREATE TABLE IF NOT EXISTS public.hotel_settings (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.hotel_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Settings are viewable by everyone" 
+ON public.hotel_settings FOR SELECT USING (true);
+
+CREATE POLICY "Admins can insert or update settings" 
+ON public.hotel_settings FOR ALL USING (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
+
+

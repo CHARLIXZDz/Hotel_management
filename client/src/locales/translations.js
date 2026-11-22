@@ -187,6 +187,24 @@ export const translations = {
     contact_zalo: 'ສົນທະນາຜ່ານ Zalo',
     contact_whatsapp: 'ສົນທະນາຜ່ານ WhatsApp',
     contact_hotline: 'ສາຍດ່ວນ 24/7',
+
+    // Admin Contact Settings
+    adm_nav_settings: 'ຕັ້ງຄ່າຂໍ້ມູນຕິດຕໍ່',
+    adm_settings_title: 'ຕັ້ງຄ່າຊ່ອງທາງຕິດຕໍ່ & ໂຮງແຮມ',
+    adm_settings_sub: 'ຈັດການລິ້ງ Messenger, Zalo, WhatsApp, Hotline ແລະ ຂໍ້ມູນຕິດຕໍ່ທີ່ສະແດງເທິງໜ້າເວັບ',
+    adm_set_section_chat: 'ຊ່ອງທາງແຊັດອອນລາຍ (Social Chat Channels)',
+    adm_set_section_direct: 'ຂໍ້ມູນຕິດຕໍ່ໂດຍກົງ (Direct Contact & Concierge)',
+    adm_set_messenger: 'ລິ້ງ Facebook Messenger (URL)',
+    adm_set_zalo_phone: 'ເບີໂທລະສັບ Zalo / Zalo ID',
+    adm_set_zalo_url: 'ລິ້ງ Zalo ໂດຍກົງ (ຕົວຢ່າງ: https://zalo.me/0901234567)',
+    adm_set_whatsapp_phone: 'ເບີໂທລະສັບ WhatsApp (ພ້ອມລະຫັດປະເທດ)',
+    adm_set_whatsapp_url: 'ລິ້ງ WhatsApp ໂດຍກົງ (ຕົວຢ່າງ: https://wa.me/84901234567)',
+    adm_set_hotline: 'ສາຍດ່ວນ Hotline 24/7',
+    adm_set_email: 'ອີເມວຕິດຕໍ່ສອບถาม',
+    adm_set_address: 'ທີ່ຢູ່ຣີສອດ / ໂຮງແຮມ',
+    adm_set_save_btn: 'ບັນທຶກການປ່ຽนແປງ',
+    adm_set_saving: 'ກຳລັງບັນທຶກ...',
+    adm_set_saved_success: 'ບັນທຶກຂໍ້ມູນຕິດຕໍ່ຮຽບຮ້ອຍແລ້ວ!',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -377,6 +395,24 @@ export const translations = {
     contact_zalo: 'Chat qua Zalo',
     contact_whatsapp: 'Chat qua WhatsApp',
     contact_hotline: 'Hotline tư vấn 24/7',
+
+    // Admin Contact Settings
+    adm_nav_settings: 'Cài đặt liên hệ',
+    adm_settings_title: 'Cài đặt thông tin liên hệ & Khách sạn',
+    adm_settings_sub: 'Quản lý đường dẫn Messenger, Zalo, WhatsApp, Hotline và thông tin hiển thị trên website',
+    adm_set_section_chat: 'Kênh nhắn tin trực tuyến (Chat Channels)',
+    adm_set_section_direct: 'Thông tin liên hệ trực tiếp (Hotline & Địa chỉ)',
+    adm_set_messenger: 'Đường dẫn Facebook Messenger (URL)',
+    adm_set_zalo_phone: 'Số điện thoại Zalo / Zalo ID',
+    adm_set_zalo_url: 'Đường dẫn Zalo trực tiếp (VD: https://zalo.me/0901234567)',
+    adm_set_whatsapp_phone: 'Số điện thoại WhatsApp (Kèm mã quốc gia)',
+    adm_set_whatsapp_url: 'Đường dẫn WhatsApp trực tiếp (VD: https://wa.me/84901234567)',
+    adm_set_hotline: 'Số Hotline tư vấn 24/7',
+    adm_set_email: 'Email hỗ trợ khách hàng',
+    adm_set_address: 'Địa chỉ khách sạn / resort',
+    adm_set_save_btn: 'Lưu thay đổi thông tin',
+    adm_set_saving: 'Đang lưu...',
+    adm_set_saved_success: 'Đã lưu thông tin liên hệ thành công!',
   },
 
   // 3. English
@@ -567,5 +603,23 @@ export const translations = {
     contact_zalo: 'Chat on Zalo',
     contact_whatsapp: 'Chat on WhatsApp',
     contact_hotline: '24/7 Hotline Support',
+
+    // Admin Contact Settings
+    adm_nav_settings: 'Contact Settings',
+    adm_settings_title: 'Contact Channels & Property Settings',
+    adm_settings_sub: 'Manage Messenger, Zalo, WhatsApp, Hotline and public contact details',
+    adm_set_section_chat: 'Online Chat Channels',
+    adm_set_section_direct: 'Direct Contact & Property Details',
+    adm_set_messenger: 'Facebook Messenger URL',
+    adm_set_zalo_phone: 'Zalo Phone Number / ID',
+    adm_set_zalo_url: 'Direct Zalo URL (e.g. https://zalo.me/0901234567)',
+    adm_set_whatsapp_phone: 'WhatsApp Number (with country code)',
+    adm_set_whatsapp_url: 'Direct WhatsApp URL (e.g. https://wa.me/84901234567)',
+    adm_set_hotline: '24/7 Concierge Hotline',
+    adm_set_email: 'Customer Support Email',
+    adm_set_address: 'Resort Address',
+    adm_set_save_btn: 'Save Contact Settings',
+    adm_set_saving: 'Saving...',
+    adm_set_saved_success: 'Contact settings saved successfully!',
   }
 };

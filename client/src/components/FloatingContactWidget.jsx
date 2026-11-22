@@ -2,11 +2,41 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Phone, X, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import api from '../services/api';
 
 export default function FloatingContactWidget() {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const widgetRef = useRef(null);
+
+  // Dynamic contact configuration loaded from Admin Settings
+  const [contactSettings, setContactSettings] = useState({
+    messenger_url: 'https://m.me/grandhorizonresort',
+    zalo_url: 'https://zalo.me/0901234567',
+    whatsapp_url: 'https://wa.me/84901234567?text=Hello%20Grand%20Horizon%20Resort,%20I%20would%20like%20to%20inquire%20about%20booking.',
+    hotline: '+84 90 123 4567'
+  });
+
+  // Fetch dynamic settings from API
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/settings/contact');
+        if (res.data?.success && res.data?.data) {
+          const d = res.data.data;
+          setContactSettings({
+            messenger_url: d.messenger_url || 'https://m.me/grandhorizonresort',
+            zalo_url: d.zalo_url || (d.zalo_phone ? `https://zalo.me/${d.zalo_phone.replace(/\D/g, '')}` : 'https://zalo.me/0901234567'),
+            whatsapp_url: d.whatsapp_url || (d.whatsapp_phone ? `https://wa.me/${d.whatsapp_phone.replace(/\D/g, '')}` : 'https://wa.me/84901234567'),
+            hotline: d.hotline || '+84 90 123 4567'
+          });
+        }
+      } catch (err) {
+        // Silently use defaults if offline or loading
+      }
+    };
+    fetchSettings();
+  }, []);
 
   // Close widget when clicking outside
   useEffect(() => {
@@ -27,7 +57,7 @@ export default function FloatingContactWidget() {
       id: 'messenger',
       name: 'Messenger',
       label: t('contact_messenger'),
-      href: 'https://m.me/grandhorizonresort',
+      href: contactSettings.messenger_url,
       bgClass: 'bg-gradient-to-tr from-[#0084FF] via-[#0099FF] to-[#00C6FF]',
       shadowClass: 'shadow-[#0084FF]/40',
       icon: (
@@ -40,14 +70,23 @@ export default function FloatingContactWidget() {
       id: 'zalo',
       name: 'Zalo',
       label: t('contact_zalo'),
-      href: 'https://zalo.me/0901234567',
+      href: contactSettings.zalo_url,
       bgClass: 'bg-[#0068FF]',
       shadowClass: 'shadow-[#0068FF]/40',
       icon: (
-        <svg className="w-6 h-6 fill-white" viewBox="0 0 48 48">
-          <path d="M24 4C12.954 4 4 12.954 4 24c0 4.103 1.24 7.92 3.375 11.1L5.12 42.88a1.5 1.5 0 001.996 1.996l7.78-2.255A19.89 19.89 0 0024 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" />
-          <path fill="#0068FF" d="M15 18h8v3h-4.5l4.5 6v3h-8v-3h4.5l-4.5-6v-3zm11 0h3v12h-3V18zm6 0h7v3h-4v1.5h3.5v3H35V27h4v3h-7V18z" />
-          <text x="11" y="30" fill="#0068FF" fontSize="13" fontWeight="900" fontFamily="sans-serif">Zalo</text>
+        <svg className="w-7 h-7" viewBox="0 0 36 36" fill="none">
+          {/* White rounded speech bubble with tail */}
+          <path
+            d="M18 4C9.716 4 3 9.82 3 17c0 4.14 2.213 7.828 5.679 10.26-.25 1.822-1.17 4.402-2.73 6.204a.2.2 0 00.16.336c3.46 0 6.622-1.934 8.41-3.177 1.115.309 2.3.477 3.481.477 8.284 0 15-5.82 15-13S26.284 4 18 4z"
+            fill="#FFFFFF"
+          />
+          {/* Authentic Official Vector Wordmark for Zalo */}
+          <g transform="translate(6.5, 4.2) scale(0.96)">
+            <path
+              fill="#0068FF"
+              d="M12.49 10.272v-.45h1.347v6.322h-.77a.576.576 0 0 1-.577-.573v.001a3.27 3.27 0 0 1-1.938.632a3.284 3.284 0 0 1-3.284-3.282a3.284 3.284 0 0 1 3.284-3.282a3.27 3.27 0 0 1 1.937.632zM6.919 7.79v.205c0 .382-.051.694-.3 1.06l-.03.034a8 8 0 0 0-.242.285L2.024 14.8h4.895v.768a.576.576 0 0 1-.577.576H0v-.362c0-.443.11-.641.25-.847L4.858 9.23H.192V7.79zm8.551 8.354a.48.48 0 0 1-.48-.48V7.79h1.441v8.354zM20.693 9.6a3.306 3.306 0 1 1 .002 6.612a3.306 3.306 0 0 1-.002-6.612m-10.14 5.253a1.932 1.932 0 1 0 0-3.863a1.932 1.932 0 0 0 0 3.863m10.14-.003a1.945 1.945 0 1 0 0-3.89a1.945 1.945 0 0 0 0 3.89"
+            />
+          </g>
         </svg>
       )
     },
@@ -55,7 +94,7 @@ export default function FloatingContactWidget() {
       id: 'whatsapp',
       name: 'WhatsApp',
       label: t('contact_whatsapp'),
-      href: 'https://wa.me/84901234567?text=Hello%20Grand%20Horizon%20Resort,%20I%20would%20like%20to%20inquire%20about%20booking.',
+      href: contactSettings.whatsapp_url,
       bgClass: 'bg-[#25D366]',
       shadowClass: 'shadow-[#25D366]/40',
       icon: (
@@ -68,7 +107,7 @@ export default function FloatingContactWidget() {
       id: 'hotline',
       name: 'Hotline',
       label: t('contact_hotline'),
-      href: 'tel:+84901234567',
+      href: `tel:${contactSettings.hotline.replace(/\s+/g, '')}`,
       bgClass: 'bg-amber-500 hover:bg-amber-600',
       shadowClass: 'shadow-amber-500/40',
       icon: <Phone className="w-5 h-5 text-white" />
@@ -119,7 +158,6 @@ export default function FloatingContactWidget() {
 
       {/* 2. Main Trigger Floating Button with Pulse Effect */}
       <div className="relative pointer-events-auto">
-        {/* Pulsing Aura Effect when closed */}
         {!isOpen && (
           <>
             <span className="absolute -inset-1 rounded-full bg-primary-500/40 animate-ping opacity-75"></span>
