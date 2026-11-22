@@ -1,0 +1,220 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { Hotel, User, LogOut, Calendar, Shield, Menu, X } from 'lucide-react';
+
+export default function Navbar() {
+  const { user, profile, isAdmin, signOut, openAuthModal } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setUserDropdownOpen(false);
+    navigate('/');
+  };
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 transition shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        {/* Brand Logo */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-primary-700 to-primary-500 flex items-center justify-center text-white shadow-md shadow-primary-500/20 group-hover:scale-105 transition transform">
+            <Hotel className="w-6 h-6" />
+          </div>
+          <div>
+            <span className="text-xl font-bold tracking-tight text-slate-900 block leading-tight">
+              Grand Horizon
+            </span>
+            <span className="text-xs text-primary-600 font-medium tracking-widest uppercase block">
+              Resort & Luxury Hotel
+            </span>
+          </div>
+        </Link>
+
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8">
+          <Link to="/" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
+            หน้าแรก
+          </Link>
+          <a href="/#rooms" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
+            ประเภทห้องพัก
+          </a>
+          <a href="/#amenities" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
+            สิ่งอำนวยความสะดวก
+          </a>
+          <a href="/#about" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
+            เกี่ยวกับโรงแรม
+          </a>
+        </nav>
+
+        {/* User Actions */}
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center gap-3 py-1.5 px-3 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition"
+              >
+                <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 font-semibold flex items-center justify-center text-sm">
+                  {(profile?.full_name || user.email || 'U')[0].toUpperCase()}
+                </div>
+                <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">
+                  {profile?.full_name || user.email.split('@')[0]}
+                </span>
+              </button>
+
+              {userDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
+                  <div className="px-4 py-2 border-b border-slate-100">
+                    <p className="text-xs text-slate-400">ลงชื่อเข้าใช้ในฐานะ</p>
+                    <p className="text-sm font-semibold text-slate-800 truncate">{user.email}</p>
+                    {isAdmin && (
+                      <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 rounded-md">
+                        Admin Role
+                      </span>
+                    )}
+                  </div>
+
+                  <Link
+                    to="/my-bookings"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition"
+                  >
+                    <Calendar className="w-4 h-4 text-slate-400" />
+                    ประวัติการจองของฉัน
+                  </Link>
+
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 transition font-medium"
+                    >
+                      <Shield className="w-4 h-4 text-amber-500" />
+                      ระบบจัดการหลังบ้าน (Admin)
+                    </Link>
+                  )}
+
+                  <div className="border-t border-slate-100 my-1"></div>
+
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+                  >
+                    <LogOut className="w-4 h-4 text-red-400" />
+                    ออกจากระบบ
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => openAuthModal('signin')}
+                className="text-sm font-medium text-slate-700 hover:text-primary-600 px-3 py-2 transition"
+              >
+                เข้าสู่ระบบ
+              </button>
+              <button
+                onClick={() => openAuthModal('signup')}
+                className="text-sm font-medium bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white px-5 py-2.5 rounded-full shadow-md shadow-primary-500/20 transition"
+              >
+                สมัครสมาชิก
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile menu button */}
+        <div className="flex md:hidden">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-slate-100 bg-white px-4 pt-3 pb-6 space-y-3">
+          <Link
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-base font-medium text-slate-700 hover:text-primary-600"
+          >
+            หน้าแรก
+          </Link>
+          <a
+            href="/#rooms"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-base font-medium text-slate-700 hover:text-primary-600"
+          >
+            ประเภทห้องพัก
+          </a>
+
+          {user ? (
+            <div className="pt-3 border-t border-slate-100 space-y-2">
+              <div className="py-2">
+                <p className="text-xs text-slate-400">เข้าสู่ระบบด้วย</p>
+                <p className="text-sm font-semibold text-slate-800">{user.email}</p>
+              </div>
+              <Link
+                to="/my-bookings"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 py-2 text-base font-medium text-slate-700 hover:text-primary-600"
+              >
+                <Calendar className="w-5 h-5 text-slate-400" />
+                ประวัติการจองของฉัน
+              </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 py-2 text-base font-medium text-amber-700"
+                >
+                  <Shield className="w-5 h-5 text-amber-500" />
+                  ระบบจัดการหลังบ้าน (Admin)
+                </Link>
+              )}
+              <button
+                onClick={() => {
+                  handleSignOut();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 py-2 text-base font-medium text-red-600"
+              >
+                <LogOut className="w-5 h-5 text-red-400" />
+                ออกจากระบบ
+              </button>
+            </div>
+          ) : (
+            <div className="pt-3 border-t border-slate-100 space-y-2">
+              <button
+                onClick={() => {
+                  openAuthModal('signin');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full py-2.5 text-center text-sm font-medium border border-slate-200 text-slate-700 rounded-xl"
+              >
+                เข้าสู่ระบบ
+              </button>
+              <button
+                onClick={() => {
+                  openAuthModal('signup');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full py-2.5 text-center text-sm font-medium bg-primary-600 text-white rounded-xl shadow-md"
+              >
+                สมัครสมาชิก
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </header>
+  );
+}
