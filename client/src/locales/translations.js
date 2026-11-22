@@ -168,6 +168,18 @@ export const translations = {
     trust_support_lbl: 'ບໍລິການລະດັບ 5 ດາວ',
     badge_popular: '🔥 ຍອດນິຍົມ',
     badge_limited: '⚡ ເຫຼືອພຽງ {count} ຫ້ອງສຸດທ້າຍ',
+
+    // SweetAlert
+    swal_login_success_title: 'ເຂົ້າສູ່ລະບົບສຳເລັດ!',
+    swal_login_success_text: 'ຍິນດີຕ້ອນຮັບກັບມາສູ່ Grand Horizon Resort',
+    swal_logout_confirm_title: 'ຢືນຢັນການອອກຈາກລະບົບ?',
+    swal_logout_confirm_text: 'ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການອອກຈາກລະບົບໃນເວລານີ້?',
+    swal_logout_confirm_btn: 'ແມ່ນແລ້ວ, ອອກຈາກລະບົບ',
+    swal_logout_cancel_btn: 'ຍົກເລີກ',
+    swal_logout_success_title: 'ອອກຈາກລະບົບສຳເລັດແລ້ວ',
+    swal_logout_success_text: 'ຫວັງວ່າຈະໄດ້ຕ້ອນຮັບທ່ານອີກຄັ້ງ',
+    swal_register_success_title: 'ລົງທະບຽນສຳເລັດແລ້ວ!',
+    swal_register_success_text: 'ສ້າງບັນຊີສຳເລັດ, ກະລຸນາເຂົ້າສູ່ລະບົບ',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -339,6 +351,18 @@ export const translations = {
     trust_support_lbl: 'Dịch vụ chuẩn 5 sao',
     badge_popular: '🔥 Phổ biến nhất',
     badge_limited: '⚡ Chỉ còn {count} phòng cuối',
+
+    // SweetAlert
+    swal_login_success_title: 'Đăng nhập thành công!',
+    swal_login_success_text: 'Chào mừng bạn quay trở lại Grand Horizon Resort',
+    swal_logout_confirm_title: 'Xác nhận đăng xuất?',
+    swal_logout_confirm_text: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+    swal_logout_confirm_btn: 'Đồng ý đăng xuất',
+    swal_logout_cancel_btn: 'Hủy bỏ',
+    swal_logout_success_title: 'Đăng xuất thành công!',
+    swal_logout_success_text: 'Hẹn gặp lại quý khách trong kỳ nghỉ tới',
+    swal_register_success_title: 'Đăng ký tài khoản thành công!',
+    swal_register_success_text: 'Tài khoản đã được tạo, vui lòng đăng nhập',
   },
 
   // 3. English
@@ -510,5 +534,17 @@ export const translations = {
     trust_support_lbl: '5-Star Concierge Service',
     badge_popular: '🔥 Popular Choice',
     badge_limited: '⚡ Only {count} room(s) left',
+
+    // SweetAlert
+    swal_login_success_title: 'Signed in successfully!',
+    swal_login_success_text: 'Welcome back to Grand Horizon Resort',
+    swal_logout_confirm_title: 'Confirm Logout?',
+    swal_logout_confirm_text: 'Are you sure you want to sign out of your account?',
+    swal_logout_confirm_btn: 'Yes, Sign Out',
+    swal_logout_cancel_btn: 'Cancel',
+    swal_logout_success_title: 'Signed Out Successfully',
+    swal_logout_success_text: 'We look forward to welcoming you back',
+    swal_register_success_title: 'Registration Successful!',
+    swal_register_success_text: 'Account created successfully. Please sign in.',
   }
 };

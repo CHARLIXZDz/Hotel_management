@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { X, Mail, Lock, User, Phone, AlertCircle, CheckCircle } from 'lucide-react';
+import { notifyLoginSuccess, notifyRegisterSuccess } from '../utils/alert';
 
 export default function AuthModal() {
   const { authModalOpen, authModalMode, openAuthModal, closeAuthModal, signIn, signUp } = useAuth();
@@ -25,11 +26,14 @@ export default function AuthModal() {
 
     try {
       if (authModalMode === 'signin') {
-        await signIn(email, password);
+        const res = await signIn(email, password);
         closeAuthModal();
+        const displayName = res?.user?.user_metadata?.full_name || email.split('@')[0];
+        notifyLoginSuccess(t, displayName);
       } else {
         await signUp(email, password, fullName, phone);
-        setSuccessMsg('Account created successfully! Please sign in.');
+        setSuccessMsg(t('swal_register_success_text') || 'Account created successfully! Please sign in.');
+        notifyRegisterSuccess(t);
         setTimeout(() => {
           openAuthModal('signin');
         }, 1200);

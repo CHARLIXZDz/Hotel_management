@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import FlagIcon from './FlagIcon';
+import { confirmLogout, notifyLogoutSuccess } from '../utils/alert';
 import {
   Hotel,
   User,
@@ -28,9 +29,13 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
+    const confirmed = await confirmLogout(t);
+    if (!confirmed) return;
+
     await signOut();
     setUserDropdownOpen(false);
     navigate('/');
+    notifyLogoutSuccess(t);
   };
 
   const languages = [

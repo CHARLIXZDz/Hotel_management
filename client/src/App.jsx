@@ -6,6 +6,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
+import LiveSocialProof from './components/LiveSocialProof';
 
 // Pages
 import Home from './pages/Home';
@@ -25,6 +26,7 @@ function PublicLayout() {
     <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
       <Navbar />
       <AuthModal />
+      <LiveSocialProof />
       <main className="flex-1">
         <Outlet />
       </main>

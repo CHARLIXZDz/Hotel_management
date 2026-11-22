@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import FlagIcon from '../../components/FlagIcon';
+import { confirmLogout, notifyLogoutSuccess } from '../../utils/alert';
 import {
   LayoutDashboard,
   BedDouble,
@@ -45,6 +46,15 @@ export default function AdminLayout() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleSignOut = async () => {
+    const confirmed = await confirmLogout(t);
+    if (!confirmed) return;
+
+    await signOut();
+    navigate('/');
+    notifyLogoutSuccess(t);
+  };
 
   if (loading) {
     return (
@@ -122,15 +132,22 @@ export default function AdminLayout() {
           </nav>
         </div>
 
-        {/* Bottom Sidebar: Return to Hotel Site */}
-        <div className="pt-6 border-t border-slate-800/80 mt-6 space-y-4">
+        {/* Bottom Sidebar: Return to Hotel Site & Logout */}
+        <div className="pt-6 border-t border-slate-800/80 mt-6 space-y-3">
           <Link
             to="/"
-            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition group"
+            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition group py-1"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition transform" />
             <span>{t('adm_back_to_site')}</span>
           </Link>
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2 text-xs text-rose-400 hover:text-rose-300 transition group py-1"
+          >
+            <LogOut className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+            <span>{t('nav_logout')}</span>
+          </button>
         </div>
       </aside>
 
@@ -201,7 +218,7 @@ export default function AdminLayout() {
 
             <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
-            {/* Admin Profile */}
+            {/* Admin Profile & Logout */}
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 font-bold flex items-center justify-center text-xs">
                 {(profile?.full_name || user.email || 'A')[0].toUpperCase()}
@@ -209,6 +226,13 @@ export default function AdminLayout() {
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline max-w-[140px] truncate">
                 {profile?.full_name || user.email.split('@')[0]}
               </span>
+              <button
+                onClick={handleSignOut}
+                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 flex items-center justify-center transition shadow-sm ml-1"
+                title={t('nav_logout')}
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </header>
