@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import { Users, Maximize2, Bed, Star, ArrowRight } from 'lucide-react';
 
 export default function RoomCard({ room, searchParams }) {
+  const { t } = useLanguage();
   const imageUrl = room.images?.[0] || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80';
 
   const queryParams = new URLSearchParams();
@@ -13,9 +15,9 @@ export default function RoomCard({ room, searchParams }) {
   const detailUrl = `/rooms/${room.slug || room.id}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col group">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col group">
       {/* Image Banner */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 dark:bg-slate-800">
         <img
           src={imageUrl}
           alt={room.name}
@@ -26,12 +28,12 @@ export default function RoomCard({ room, searchParams }) {
         {room.available_rooms !== undefined && (
           <div className="absolute top-4 left-4">
             {room.available_rooms > 0 ? (
-              <span className="px-3 py-1 bg-white/95 backdrop-blur-md text-emerald-700 text-xs font-semibold rounded-full shadow-sm">
-                ว่างเหลือ {room.available_rooms} ห้อง
+              <span className="px-3 py-1 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full shadow-sm">
+                {t('rooms_available', { count: room.available_rooms })}
               </span>
             ) : (
               <span className="px-3 py-1 bg-rose-600 text-white text-xs font-semibold rounded-full shadow-sm">
-                เต็มแล้ว
+                {t('rooms_soldout')}
               </span>
             )}
           </div>
@@ -50,19 +52,19 @@ export default function RoomCard({ room, searchParams }) {
       {/* Content */}
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xl font-bold text-slate-900 group-hover:text-primary-600 transition">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition">
             {room.name}
           </h3>
 
-          <p className="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">
+          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-2 leading-relaxed">
             {room.description}
           </p>
 
           {/* Key Specs */}
-          <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-slate-100 text-xs text-slate-600">
+          <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
             <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4 text-slate-400" />
-              <span>สูงสุด {room.capacity} ท่าน</span>
+              <span>{t('rooms_max_guests', { count: room.capacity })}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Bed className="w-4 h-4 text-slate-400" />
@@ -71,29 +73,29 @@ export default function RoomCard({ room, searchParams }) {
             {room.size_sqm && (
               <div className="flex items-center gap-1.5">
                 <Maximize2 className="w-4 h-4 text-slate-400" />
-                <span>{room.size_sqm} ตร.ม.</span>
+                <span>{t('rooms_size', { size: room.size_sqm })}</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Price & Action */}
-        <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+        <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-400 block">ราคาเริ่มต้น</span>
+            <span className="text-xs text-slate-400 block">{t('rooms_price_start')}</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-slate-900">
+              <span className="text-2xl font-bold text-slate-900 dark:text-white">
                 ฿{Number(room.price_per_night).toLocaleString()}
               </span>
-              <span className="text-xs text-slate-500">/ คืน</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">{t('rooms_per_night')}</span>
             </div>
           </div>
 
           <Link
             to={detailUrl}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white font-medium text-sm transition"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white font-medium text-sm transition"
           >
-            <span>ดูรายละเอียด</span>
+            <span>{t('rooms_view_details')}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

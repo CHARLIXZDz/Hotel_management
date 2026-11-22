@@ -1,12 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Hotel, User, LogOut, Calendar, Shield, Menu, X } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import {
+  Hotel,
+  User,
+  LogOut,
+  Calendar,
+  Shield,
+  Menu,
+  X,
+  Sun,
+  Moon,
+  Globe
+} from 'lucide-react';
 
 export default function Navbar() {
   const { user, profile, isAdmin, signOut, openAuthModal } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -15,8 +32,16 @@ export default function Navbar() {
     navigate('/');
   };
 
+  const languages = [
+    { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'th', label: 'ไทย', flag: '🇹🇭' },
+  ];
+
+  const currentLang = languages.find(l => l.code === language) || languages[0];
+
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 transition shadow-sm">
+    <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-3 group">
@@ -24,55 +49,100 @@ export default function Navbar() {
             <Hotel className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xl font-bold tracking-tight text-slate-900 block leading-tight">
+            <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white block leading-tight">
               Grand Horizon
             </span>
-            <span className="text-xs text-primary-600 font-medium tracking-widest uppercase block">
-              Resort & Luxury Hotel
+            <span className="text-xs text-primary-600 dark:text-primary-400 font-medium tracking-widest uppercase block">
+              {t('brand_sub')}
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
-            หน้าแรก
+          <Link to="/" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">
+            {t('nav_home')}
           </Link>
-          <a href="/#rooms" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
-            ประเภทห้องพัก
+          <a href="/#rooms" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">
+            {t('nav_rooms')}
           </a>
-          <a href="/#amenities" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
-            สิ่งอำนวยความสะดวก
+          <a href="/#amenities" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">
+            {t('nav_amenities')}
           </a>
-          <a href="/#about" className="text-sm font-medium text-slate-600 hover:text-primary-600 transition">
-            เกี่ยวกับโรงแรม
+          <a href="/#about" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">
+            {t('nav_about')}
           </a>
         </nav>
 
-        {/* User Actions */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Actions: Theme Toggle, Language Switcher, User Auth */}
+        <div className="hidden md:flex items-center gap-3">
+          {/* Theme Switcher Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          {/* Language Switcher Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              className="flex items-center gap-1.5 py-1.5 px-3 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:border-slate-300 dark:hover:border-slate-600 transition"
+            >
+              <span>{currentLang.flag}</span>
+              <span className="uppercase">{currentLang.code}</span>
+            </button>
+
+            {langDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-fade-in">
+                {languages.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => {
+                      setLanguage(l.code);
+                      setLangDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium transition text-left ${
+                      language === l.code
+                        ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400 font-bold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    <span>{l.flag}</span>
+                    <span>{l.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+          {/* User Profile or Login */}
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-3 py-1.5 px-3 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition"
+                className="flex items-center gap-2.5 py-1.5 px-3 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
               >
-                <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 font-semibold flex items-center justify-center text-sm">
+                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 font-semibold flex items-center justify-center text-sm">
                   {(profile?.full_name || user.email || 'U')[0].toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200 max-w-[120px] truncate">
                   {profile?.full_name || user.email.split('@')[0]}
                 </span>
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-slate-100">
-                    <p className="text-xs text-slate-400">ลงชื่อเข้าใช้ในฐานะ</p>
-                    <p className="text-sm font-semibold text-slate-800 truncate">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-2 z-50">
+                  <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                    <p className="text-xs text-slate-400">{t('logged_in_as')}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user.email}</p>
                     {isAdmin && (
-                      <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 rounded-md">
-                        Admin Role
+                      <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 rounded-md">
+                        {t('admin_role')}
                       </span>
                     )}
                   </div>
@@ -80,58 +150,65 @@ export default function Navbar() {
                   <Link
                     to="/my-bookings"
                     onClick={() => setUserDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition"
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary-600 transition"
                   >
                     <Calendar className="w-4 h-4 text-slate-400" />
-                    ประวัติการจองของฉัน
+                    {t('nav_my_bookings')}
                   </Link>
 
                   {isAdmin && (
                     <Link
                       to="/admin"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 transition font-medium"
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-700 transition font-medium"
                     >
                       <Shield className="w-4 h-4 text-amber-500" />
-                      ระบบจัดการหลังบ้าน (Admin)
+                      {t('nav_admin')}
                     </Link>
                   )}
 
-                  <div className="border-t border-slate-100 my-1"></div>
+                  <div className="border-t border-slate-100 dark:border-slate-700 my-1"></div>
 
                   <button
                     onClick={handleSignOut}
-                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition"
                   >
                     <LogOut className="w-4 h-4 text-red-400" />
-                    ออกจากระบบ
+                    {t('nav_logout')}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => openAuthModal('signin')}
-                className="text-sm font-medium text-slate-700 hover:text-primary-600 px-3 py-2 transition"
+                className="text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 transition"
               >
-                เข้าสู่ระบบ
+                {t('nav_login')}
               </button>
               <button
                 onClick={() => openAuthModal('signup')}
-                className="text-sm font-medium bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white px-5 py-2.5 rounded-full shadow-md shadow-primary-500/20 transition"
+                className="text-sm font-medium bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white px-4 py-2 rounded-full shadow-md shadow-primary-500/20 transition"
               >
-                สมัครสมาชิก
+                {t('nav_register')}
               </button>
             </div>
           )}
         </div>
 
-        {/* Mobile menu button */}
-        <div className="flex md:hidden">
+        {/* Mobile Actions & Menu Toggle */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+            className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -140,44 +217,63 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-100 bg-white px-4 pt-3 pb-6 space-y-3">
+        <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-3">
+          <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Language</span>
+            <div className="flex gap-2">
+              {languages.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => setLanguage(l.code)}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition ${
+                    language === l.code
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  {l.flag} {l.code.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Link
             to="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-700 hover:text-primary-600"
+            className="block py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:text-primary-600"
           >
-            หน้าแรก
+            {t('nav_home')}
           </Link>
           <a
             href="/#rooms"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-700 hover:text-primary-600"
+            className="block py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:text-primary-600"
           >
-            ประเภทห้องพัก
+            {t('nav_rooms')}
           </a>
 
           {user ? (
-            <div className="pt-3 border-t border-slate-100 space-y-2">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
               <div className="py-2">
-                <p className="text-xs text-slate-400">เข้าสู่ระบบด้วย</p>
-                <p className="text-sm font-semibold text-slate-800">{user.email}</p>
+                <p className="text-xs text-slate-400">{t('logged_in_as')}</p>
+                <p className="text-sm font-semibold text-slate-800 dark:text-white">{user.email}</p>
               </div>
               <Link
                 to="/my-bookings"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 py-2 text-base font-medium text-slate-700 hover:text-primary-600"
+                className="flex items-center gap-2 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:text-primary-600"
               >
                 <Calendar className="w-5 h-5 text-slate-400" />
-                ประวัติการจองของฉัน
+                {t('nav_my_bookings')}
               </Link>
               {isAdmin && (
                 <Link
                   to="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 py-2 text-base font-medium text-amber-700"
+                  className="flex items-center gap-2 py-2 text-base font-medium text-amber-600 dark:text-amber-400"
                 >
                   <Shield className="w-5 h-5 text-amber-500" />
-                  ระบบจัดการหลังบ้าน (Admin)
+                  {t('nav_admin')}
                 </Link>
               )}
               <button
@@ -185,22 +281,22 @@ export default function Navbar() {
                   handleSignOut();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-2 py-2 text-base font-medium text-red-600"
+                className="w-full flex items-center gap-2 py-2 text-base font-medium text-red-600 dark:text-red-400"
               >
                 <LogOut className="w-5 h-5 text-red-400" />
-                ออกจากระบบ
+                {t('nav_logout')}
               </button>
             </div>
           ) : (
-            <div className="pt-3 border-t border-slate-100 space-y-2">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
               <button
                 onClick={() => {
                   openAuthModal('signin');
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 text-center text-sm font-medium border border-slate-200 text-slate-700 rounded-xl"
+                className="w-full py-2.5 text-center text-sm font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl"
               >
-                เข้าสู่ระบบ
+                {t('nav_login')}
               </button>
               <button
                 onClick={() => {
@@ -209,7 +305,7 @@ export default function Navbar() {
                 }}
                 className="w-full py-2.5 text-center text-sm font-medium bg-primary-600 text-white rounded-xl shadow-md"
               >
-                สมัครสมาชิก
+                {t('nav_register')}
               </button>
             </div>
           )}

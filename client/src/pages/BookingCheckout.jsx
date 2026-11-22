@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Calendar,
   Users,
   ShieldCheck,
   CheckCircle,
   AlertCircle,
-  ChevronLeft,
-  Lock
+  ChevronLeft
 } from 'lucide-react';
 
 export default function BookingCheckout() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { t } = useLanguage();
 
   const roomId = searchParams.get('roomId');
   const checkIn = searchParams.get('checkIn');
@@ -28,7 +29,6 @@ export default function BookingCheckout() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Guest details form state
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
@@ -67,14 +67,12 @@ export default function BookingCheckout() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-slate-500 text-sm">กำลังเตรียมข้อมูลการจอง...</p>
+        <p className="text-slate-500 text-sm">Loading reservation...</p>
       </div>
     );
   }
 
-  if (!room) {
-    return null;
-  }
+  if (!room) return null;
 
   const startDate = new Date(checkIn);
   const endDate = new Date(checkOut);
@@ -102,123 +100,122 @@ export default function BookingCheckout() {
       const res = await api.post('/bookings', payload);
 
       if (res.data?.success) {
-        // Successfully booked! Navigate to my-bookings page with success state
         navigate('/my-bookings', {
           state: {
             newBookingCode: res.data.data.booking_code,
-            successMessage: 'ยินดีด้วย! การจองของคุณเสร็จสมบูรณ์เรียบร้อยแล้ว ชำระเงิน ณ วันเข้าพัก'
+            successMessage: 'Reservation confirmed successfully! Payment is due at property upon arrival.'
           }
         });
       }
     } catch (err) {
       console.error('Booking submission error:', err);
-      setErrorMsg(err.response?.data?.message || 'ไม่สามารถทำการจองได้ กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง');
+      setErrorMsg(err.response?.data?.message || 'Could not complete booking.');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-10 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary-600 mb-6 transition"
+          className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 mb-6 transition"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>ย้อนกลับไปแก้ไข</span>
+          <span>{t('detail_back')}</span>
         </button>
 
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-2">
-          ยืนยันการจองห้องพัก
+        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">
+          {t('co_title')}
         </h1>
-        <p className="text-sm text-slate-500 mb-8">
-          กรุณาตรวจสอบข้อมูลผู้เข้าพักและรายละเอียดการจองก่อนกดยืนยัน
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-8">
+          {t('co_desc')}
         </p>
 
         {errorMsg && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-2xl flex items-center gap-3">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm rounded-2xl flex items-center gap-3">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Guest Details Form */}
+          {/* Left: Guest Details Form */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmitBooking} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
-              <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100">
-                ข้อมูลผู้เข้าพักหลัก
+            <form onSubmit={handleSubmitBooking} className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-800">
+                {t('co_guest_info')}
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    ชื่อ - นามสกุล *
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                    {t('co_full_name')}
                   </label>
                   <input
                     type="text"
                     required
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    placeholder="นายสมชาย ใจดี"
-                    className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none"
+                    placeholder="John Doe"
+                    className="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    เบอร์โทรศัพท์ติดต่อ *
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                    {t('co_phone')}
                   </label>
                   <input
                     type="tel"
                     required
                     value={guestPhone}
                     onChange={(e) => setGuestPhone(e.target.value)}
-                    placeholder="0812345678"
-                    className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none"
+                    placeholder="+84 90 123 4567"
+                    className="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  อีเมลยืนยันการจอง *
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  {t('co_email')}
                 </label>
                 <input
                   type="email"
                   required
                   value={guestEmail}
                   onChange={(e) => setGuestEmail(e.target.value)}
-                  placeholder="somchai@example.com"
-                  className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none"
+                  placeholder="john@example.com"
+                  className="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  คำขอพิเศษเพิ่มเติม (ถ้ามี)
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  {t('co_special_req')}
                 </label>
                 <textarea
                   rows={3}
                   value={specialRequests}
                   onChange={(e) => setSpecialRequests(e.target.value)}
-                  placeholder="เช่น ขอห้องพักชั้นสูง, ขอเตียงคู่, หรือเวลาเดินทางถึงโดยประมาณ"
-                  className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none"
+                  placeholder="High floor, twin beds, or estimated arrival time..."
+                  className="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                 ></textarea>
               </div>
 
-              {/* Payment Method Option */}
-              <div className="pt-4 border-t border-slate-100">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">วิธีการชำระเงิน</h3>
-                <div className="p-4 bg-primary-50/50 border border-primary-200 rounded-2xl flex items-start gap-3">
+              {/* Payment Method */}
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">{t('co_pay_method_title')}</h3>
+                <div className="p-4 bg-primary-50/50 dark:bg-primary-950/40 border border-primary-200 dark:border-primary-800 rounded-2xl flex items-start gap-3">
                   <div className="w-5 h-5 rounded-full border-2 border-primary-600 bg-primary-600 text-white flex items-center justify-center mt-0.5">
                     <CheckCircle className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">ชำระเงินเมื่อเดินทางถึงที่พัก (Pay at Property)</h4>
-                    <p className="text-xs text-slate-600 mt-0.5">
-                      ท่านสามารถชำระด้วยเงินสด บัตรเครดิต หรือสแกน QR Code พร้อมเพย์ ที่เคาน์เตอร์ต้อนรับของโรงแรมตอนเช็คอิน
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('detail_pay_guarantee_title')}</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                      {t('co_pay_method_desc')}
                     </p>
                   </div>
                 </div>
@@ -229,16 +226,16 @@ export default function BookingCheckout() {
                 disabled={submitting}
                 className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white font-bold text-base rounded-2xl shadow-xl shadow-primary-600/25 transition disabled:opacity-50"
               >
-                {submitting ? 'กำลังบันทึกข้อมูลการจอง...' : 'ยืนยันการจองห้องพัก (ไม่ต้องจ่ายเงินตอนนี้)'}
+                {submitting ? 'Processing reservation...' : t('co_submit_btn')}
               </button>
             </form>
           </div>
 
-          {/* Right Column: Booking Summary Card */}
+          {/* Right: Summary Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
-              <h2 className="text-base font-bold text-slate-900 pb-3 border-b border-slate-100">
-                สรุปรายการจอง
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-800">
+                {t('co_summary_title')}
               </h2>
 
               <div className="flex gap-4">
@@ -248,45 +245,45 @@ export default function BookingCheckout() {
                   className="w-24 h-20 rounded-xl object-cover flex-shrink-0"
                 />
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">{room.name}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{room.bed_type}</p>
-                  <p className="text-xs text-slate-500">{numRooms} ห้อง, {numGuests} ท่าน</p>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">{room.name}</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{room.bed_type}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{numRooms} {t('detail_room_unit')}, {numGuests} Guests</p>
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl space-y-3 text-xs text-slate-700">
+              <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-3 text-xs text-slate-700 dark:text-slate-300">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">เช็คอิน:</span>
-                  <span className="font-semibold">{checkIn} (14:00 น. เป็นต้นไป)</span>
+                  <span className="text-slate-400">{t('search_checkin')}:</span>
+                  <span className="font-semibold">{checkIn} {t('co_checkin_time')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">เช็คเอาท์:</span>
-                  <span className="font-semibold">{checkOut} (ก่อน 12:00 น.)</span>
+                  <span className="text-slate-400">{t('search_checkout')}:</span>
+                  <span className="font-semibold">{checkOut} {t('co_checkout_time')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">ระยะเวลาเข้าพัก:</span>
-                  <span className="font-semibold">{totalNights} คืน</span>
+                  <span className="text-slate-400">{t('co_duration')}</span>
+                  <span className="font-semibold">{totalNights} {t('co_nights')}</span>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-100 text-xs">
-                <div className="flex justify-between text-slate-600">
-                  <span>฿{Number(room.price_per_night).toLocaleString()} × {totalNights} คืน</span>
-                  <span className="font-medium">฿{(room.price_per_night * totalNights).toLocaleString()}</span>
+              <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                  <span>฿{Number(room.price_per_night).toLocaleString()} × {totalNights} {t('co_nights')}</span>
+                  <span className="font-medium text-slate-900 dark:text-white">฿{(room.price_per_night * totalNights).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>จำนวนห้อง</span>
-                  <span className="font-medium">{numRooms} ห้อง</span>
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                  <span>{t('detail_room_count')}</span>
+                  <span className="font-medium text-slate-900 dark:text-white">{numRooms} {t('detail_room_unit')}</span>
                 </div>
-                <div className="pt-3 border-t border-slate-100 flex justify-between items-baseline">
-                  <span className="text-sm font-bold text-slate-900">ยอดชำระ ณ ที่พัก</span>
-                  <span className="text-2xl font-extrabold text-primary-700">฿{totalPrice.toLocaleString()}</span>
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-baseline">
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{t('co_due_at_hotel')}</span>
+                  <span className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">฿{totalPrice.toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/60 text-[11px] text-amber-900 leading-relaxed">
-                <p className="font-semibold mb-1">นโยบายการเข้าพัก:</p>
-                <p>กรุณาแสดงรหัสการจองและบัตรประชาชน/พาสปอร์ต ณ วันเช็คอิน</p>
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200/60 dark:border-amber-800/60 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
+                <p className="font-semibold mb-1">{t('co_policy_title')}</p>
+                <p>{t('co_policy_desc')}</p>
               </div>
             </div>
           </div>
