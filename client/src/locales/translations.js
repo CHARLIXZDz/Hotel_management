@@ -205,6 +205,11 @@ export const translations = {
     adm_set_save_btn: 'ບັນທຶກການປ່ຽนແປງ',
     adm_set_saving: 'ກຳລັງບັນທຶກ...',
     adm_set_saved_success: 'ບັນທຶກຂໍ້ມູນຕິດຕໍ່ຮຽບຮ້ອຍແລ້ວ!',
+    adm_set_section_banners: 'ຮູບພາບສະໄລດ໌ແບນເນີຫຼັກ (Hero Background Slider)',
+    adm_set_banners_sub: 'ອັບໂຫຼດ ຫຼື ປ່ຽນຮູບພາບພື້ນຫຼັງສະໄລດ໌ 3 ຮູບເທິງໜ້າຫຼັກຂອງເວັບໄຊທ໌',
+    adm_set_upload_banners: 'ອັບໂຫຼດຮູບແບນເນີຈາກຄອມພິວເຕີ',
+    adm_set_add_banner_url: 'ຫຼື ເພີ່ມລິ້ງ URL ຮູບພາບ',
+    adm_set_reset_default_banners: 'ຄືນຄ່າຮູບພາບມາດຕະຖານ',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -413,6 +418,11 @@ export const translations = {
     adm_set_save_btn: 'Lưu thay đổi thông tin',
     adm_set_saving: 'Đang lưu...',
     adm_set_saved_success: 'Đã lưu thông tin liên hệ thành công!',
+    adm_set_section_banners: 'Quản lý 3 ảnh slide nền trang chủ (Hero Background Slider)',
+    adm_set_banners_sub: 'Tải ảnh từ máy tính hoặc đổi ảnh nền trình chiếu trên trang chủ',
+    adm_set_upload_banners: 'Tải ảnh slide từ máy tính của bạn',
+    adm_set_add_banner_url: 'Hoặc thêm bằng đường dẫn URL ảnh',
+    adm_set_reset_default_banners: 'Khôi phục ảnh mẫu mặc định',
   },
 
   // 3. English
@@ -621,5 +631,10 @@ export const translations = {
     adm_set_save_btn: 'Save Contact Settings',
     adm_set_saving: 'Saving...',
     adm_set_saved_success: 'Contact settings saved successfully!',
+    adm_set_section_banners: 'Hero Background Slider Images',
+    adm_set_banners_sub: 'Upload or replace the rotating background hero banners on the homepage',
+    adm_set_upload_banners: 'Upload banner photos from your computer',
+    adm_set_add_banner_url: 'Or add image via direct URL',
+    adm_set_reset_default_banners: 'Restore Default Luxury Photos',
   }
 };

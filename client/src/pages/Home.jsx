@@ -19,7 +19,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
-const HERO_IMAGES = [
+const DEFAULT_HERO_IMAGES = [
   'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=2000&q=85',
   'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=2000&q=85',
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=85'
@@ -30,14 +30,31 @@ export default function Home() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
+  const [heroImages, setHeroImages] = useState(DEFAULT_HERO_IMAGES);
+
+  // Fetch dynamic hero banners set by admin
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await api.get('/settings/banners');
+        if (res.data?.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          setHeroImages(res.data.data);
+        }
+      } catch (err) {
+        // Silently use defaults
+      }
+    };
+    fetchBanners();
+  }, []);
 
   // Auto rotate hero images every 6 seconds
   useEffect(() => {
+    if (heroImages.length === 0) return;
     const timer = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+      setHeroIndex((prev) => (prev + 1) % heroImages.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroImages]);
 
   const getTomorrow = () => {
     const d = new Date();
@@ -96,7 +113,7 @@ export default function Home() {
           <AnimatePresence mode="wait">
             <motion.img
               key={heroIndex}
-              src={HERO_IMAGES[heroIndex]}
+              src={heroImages[heroIndex] || DEFAULT_HERO_IMAGES[0]}
               alt="Luxury Resort Background"
               initial={{ opacity: 0, scale: 1.08 }}
               animate={{ opacity: 0.45, scale: 1.02 }}

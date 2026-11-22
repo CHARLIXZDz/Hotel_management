@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FALLBACK_FILE = path.join(__dirname, '../../data/settings.json');
+const BANNERS_FALLBACK_FILE = path.join(__dirname, '../../data/hero_banners.json');
 
 const DEFAULT_CONTACT_SETTINGS = {
   messenger_url: 'https://m.me/grandhorizonresort',
@@ -15,36 +16,41 @@ const DEFAULT_CONTACT_SETTINGS = {
   address: '128 Beachfront Blvd, Ao Nang, Krabi, Thailand'
 };
 
+const DEFAULT_HERO_BANNERS = [
+  'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=2000&q=85',
+  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=2000&q=85',
+  'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=85'
+];
+
 // Helper to read local fallback
-const readLocalFallback = () => {
+const readLocalFallback = (file, defaultVal) => {
   try {
-    if (fs.existsSync(FALLBACK_FILE)) {
-      const data = fs.readFileSync(FALLBACK_FILE, 'utf8');
+    if (fs.existsSync(file)) {
+      const data = fs.readFileSync(file, 'utf8');
       return JSON.parse(data);
     }
   } catch (err) {
-    console.error('Error reading local settings fallback:', err);
+    console.error(`Error reading ${file}:`, err);
   }
-  return DEFAULT_CONTACT_SETTINGS;
+  return defaultVal;
 };
 
 // Helper to write local fallback
-const writeLocalFallback = (settings) => {
+const writeLocalFallback = (file, data) => {
   try {
-    const dir = path.dirname(FALLBACK_FILE);
+    const dir = path.dirname(file);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(FALLBACK_FILE, JSON.stringify(settings, null, 2), 'utf8');
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.error('Error writing local settings fallback:', err);
+    console.error(`Error writing ${file}:`, err);
   }
 };
 
 // 1. Get contact settings
 exports.getContactSettings = async (req, res) => {
   try {
-    // Attempt to query Supabase hotel_settings table
     const { data, error } = await supabase
       .from('hotel_settings')
       .select('value')
@@ -58,8 +64,7 @@ exports.getContactSettings = async (req, res) => {
       });
     }
 
-    // Fallback if table doesn't exist or row empty
-    const localData = readLocalFallback();
+    const localData = readLocalFallback(FALLBACK_FILE, DEFAULT_CONTACT_SETTINGS);
     return res.json({
       success: true,
       data: { ...DEFAULT_CONTACT_SETTINGS, ...localData }
@@ -98,10 +103,8 @@ exports.updateContactSettings = async (req, res) => {
       address: address || DEFAULT_CONTACT_SETTINGS.address
     };
 
-    // Save to local file as immediate persistence
-    writeLocalFallback(updatedSettings);
+    writeLocalFallback(FALLBACK_FILE, updatedSettings);
 
-    // Try upserting to Supabase hotel_settings table
     try {
       await supabase
         .from('hotel_settings')
@@ -110,7 +113,7 @@ exports.updateContactSettings = async (req, res) => {
           { onConflict: 'key' }
         );
     } catch (dbErr) {
-      console.warn('Could not upsert to Supabase hotel_settings (using local storage):', dbErr.message);
+      console.warn('Could not upsert contact_info to Supabase hotel_settings:', dbErr.message);
     }
 
     return res.json({
@@ -123,6 +126,74 @@ exports.updateContactSettings = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to update contact settings'
+    });
+  }
+};
+
+// 3. Get Hero Banners
+exports.getHeroBanners = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('hotel_settings')
+      .select('value')
+      .eq('key', 'hero_banners')
+      .single();
+
+    if (!error && data?.value && Array.isArray(data.value) && data.value.length > 0) {
+      return res.json({
+        success: true,
+        data: data.value
+      });
+    }
+
+    const localBanners = readLocalFallback(BANNERS_FALLBACK_FILE, DEFAULT_HERO_BANNERS);
+    return res.json({
+      success: true,
+      data: localBanners
+    });
+  } catch (err) {
+    console.error('getHeroBanners error:', err);
+    return res.json({
+      success: true,
+      data: DEFAULT_HERO_BANNERS
+    });
+  }
+};
+
+// 4. Update Hero Banners (Admin only)
+exports.updateHeroBanners = async (req, res) => {
+  try {
+    const { banners } = req.body;
+    if (!banners || !Array.isArray(banners) || banners.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Banners array cannot be empty'
+      });
+    }
+
+    writeLocalFallback(BANNERS_FALLBACK_FILE, banners);
+
+    try {
+      await supabase
+        .from('hotel_settings')
+        .upsert(
+          { key: 'hero_banners', value: banners, updated_at: new Date().toISOString() },
+          { onConflict: 'key' }
+        );
+    } catch (dbErr) {
+      console.warn('Could not upsert hero_banners to Supabase hotel_settings:', dbErr.message);
+    }
+
+    return res.json({
+      success: true,
+      message: 'Hero banners updated successfully',
+      data: banners
+    });
+  } catch (err) {
+    console.error('updateHeroBanners error:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update hero banners'
     });
   }
 };
