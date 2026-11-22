@@ -413,7 +413,7 @@ export default function RoomDetail() {
                   {room.reviews.map((rev) => {
                     const authorName = rev.profiles?.full_name || rev.guest_name || 'Guest';
                     const isCurrentUser = user && (user.id === rev.user_id || rev.profiles?.full_name === (user.user_metadata?.full_name || user.email?.split('@')[0]));
-                    const avatarUrl = rev.profiles?.avatar_url || (isCurrentUser ? user.user_metadata?.avatar_url : null);
+                    const avatarUrl = rev.profiles?.avatar_url || rev.avatar_url || (isCurrentUser ? user.user_metadata?.avatar_url : null);
 
                     return (
                       <div key={rev.id} className="pt-5 first:pt-0">
@@ -421,9 +421,18 @@ export default function RoomDetail() {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-primary-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-sm flex-shrink-0">
                               {avatarUrl ? (
-                                <img src={avatarUrl} alt={authorName} className="w-full h-full object-cover" />
+                                <img
+                                  src={avatarUrl}
+                                  alt={authorName}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.style.display = 'none';
+                                    e.target.parentElement.innerText = authorName[0]?.toUpperCase() || 'U';
+                                  }}
+                                />
                               ) : (
-                                authorName[0].toUpperCase()
+                                authorName[0]?.toUpperCase() || 'U'
                               )}
                             </div>
                             <div>

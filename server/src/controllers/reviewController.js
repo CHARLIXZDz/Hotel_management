@@ -13,7 +13,35 @@ const getReviewsByRoom = async (req, res) => {
 
     if (error) throw error;
 
-    return res.json({ success: true, data: reviews || [] });
+    let enrichedReviews = reviews || [];
+    if (enrichedReviews.length > 0) {
+      try {
+        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+        const userMap = new Map();
+        (authUsers?.users || []).forEach(u => {
+          userMap.set(u.id, {
+            avatar_url: u.user_metadata?.avatar_url || null,
+            full_name: u.user_metadata?.full_name || u.email?.split('@')[0]
+          });
+        });
+
+        enrichedReviews = enrichedReviews.map(r => {
+          const authUser = userMap.get(r.user_id);
+          return {
+            ...r,
+            profiles: {
+              ...(r.profiles || {}),
+              full_name: r.profiles?.full_name || authUser?.full_name || 'Guest',
+              avatar_url: authUser?.avatar_url || null
+            }
+          };
+        });
+      } catch (authErr) {
+        console.error('Failed to map user avatars:', authErr);
+      }
+    }
+
+    return res.json({ success: true, data: enrichedReviews });
   } catch (err) {
     console.error('getReviewsByRoom error:', err);
     return res.status(500).json({ success: false, message: 'Failed to fetch reviews', error: err.message });
@@ -74,10 +102,21 @@ const createReview = async (req, res) => {
 
     if (revErr) throw revErr;
 
+    // Attach current user's avatar & name from metadata
+    const userAvatar = req.user?.user_metadata?.avatar_url || null;
+    const userFullName = req.user?.user_metadata?.full_name || review.profiles?.full_name || 'Guest';
+
     return res.status(201).json({
       success: true,
       message: 'Review and comment submitted successfully. Thank you!',
-      data: review
+      data: {
+        ...review,
+        profiles: {
+          ...(review.profiles || {}),
+          full_name: userFullName,
+          avatar_url: userAvatar
+        }
+      }
     });
   } catch (err) {
     console.error('createReview error:', err);

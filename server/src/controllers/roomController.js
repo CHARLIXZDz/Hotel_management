@@ -84,7 +84,35 @@ const getRoomById = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Room not found' });
     }
 
-    const ratings = room.reviews?.map(r => r.rating) || [];
+    let enrichedReviews = room.reviews || [];
+    if (enrichedReviews.length > 0) {
+      try {
+        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+        const userMap = new Map();
+        (authUsers?.users || []).forEach(u => {
+          userMap.set(u.id, {
+            avatar_url: u.user_metadata?.avatar_url || null,
+            full_name: u.user_metadata?.full_name || u.email?.split('@')[0]
+          });
+        });
+
+        enrichedReviews = enrichedReviews.map(r => {
+          const authUser = userMap.get(r.user_id);
+          return {
+            ...r,
+            profiles: {
+              ...(r.profiles || {}),
+              full_name: r.profiles?.full_name || authUser?.full_name || 'Guest',
+              avatar_url: authUser?.avatar_url || null
+            }
+          };
+        });
+      } catch (authErr) {
+        console.error('Failed to map user avatars:', authErr);
+      }
+    }
+
+    const ratings = enrichedReviews?.map(r => r.rating) || [];
     const avgRating = ratings.length > 0 
       ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) 
       : null;
@@ -93,6 +121,7 @@ const getRoomById = async (req, res) => {
       success: true,
       data: {
         ...room,
+        reviews: enrichedReviews,
         avg_rating: avgRating ? parseFloat(avgRating) : null,
         review_count: ratings.length
       }
