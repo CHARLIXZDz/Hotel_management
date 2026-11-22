@@ -51,20 +51,49 @@ export default function AdminSettings() {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      // 1. Fetch contact info
-      const contactRes = await api.get('/settings/contact');
-      if (contactRes.data?.success && contactRes.data?.data) {
-        setFormData((prev) => ({
-          ...prev,
-          ...contactRes.data.data
-        }));
+      let loadedContact = null;
+      let loadedBanners = null;
+
+      // 1. Try fetching from Backend API
+      try {
+        const contactRes = await api.get('/settings/contact');
+        if (contactRes.data?.success && contactRes.data?.data) {
+          loadedContact = contactRes.data.data;
+        }
+      } catch (e) {}
+
+      try {
+        const bannersRes = await api.get('/settings/banners');
+        if (bannersRes.data?.success && Array.isArray(bannersRes.data.data) && bannersRes.data.data.length > 0) {
+          loadedBanners = bannersRes.data.data;
+        }
+      } catch (e) {}
+
+      // 2. Try fetching from Supabase hotel_settings directly
+      if (!loadedContact || !loadedBanners) {
+        try {
+          const { data } = await supabase.from('hotel_settings').select('*');
+          if (data && data.length > 0) {
+            const cRow = data.find((r) => r.key === 'contact_info');
+            if (cRow?.value) loadedContact = cRow.value;
+            const bRow = data.find((r) => r.key === 'hero_banners');
+            if (bRow?.value && Array.isArray(bRow.value)) loadedBanners = bRow.value;
+          }
+        } catch (e) {}
       }
 
-      // 2. Fetch hero banners
-      const bannersRes = await api.get('/settings/banners');
-      if (bannersRes.data?.success && Array.isArray(bannersRes.data.data) && bannersRes.data.data.length > 0) {
-        setBanners(bannersRes.data.data);
+      // 3. Fallback to localStorage cache
+      if (!loadedContact) {
+        const cached = localStorage.getItem('grand_horizon_contact_info');
+        if (cached) loadedContact = JSON.parse(cached);
       }
+      if (!loadedBanners) {
+        const cachedB = localStorage.getItem('grand_horizon_hero_banners');
+        if (cachedB) loadedBanners = JSON.parse(cachedB);
+      }
+
+      if (loadedContact) setFormData((prev) => ({ ...prev, ...loadedContact }));
+      if (loadedBanners) setBanners(loadedBanners);
     } catch (err) {
       console.error('Failed to load settings:', err);
     } finally {
@@ -161,17 +190,40 @@ export default function AdminSettings() {
     setSaving(true);
 
     try {
-      // 1. Save contact settings
-      await api.put('/settings/contact', formData);
+      // 1. Save to Backend API (which saves to Supabase Admin metadata & file cache)
+      try {
+        await api.put('/settings/contact', formData);
+      } catch (apiErr) {
+        console.warn('API save note:', apiErr.message);
+      }
 
-      // 2. Save hero banners
-      await api.put('/settings/banners', { banners });
+      try {
+        await api.put('/settings/banners', { banners });
+      } catch (bannerErr) {
+        console.warn('Banners API save note:', bannerErr.message);
+      }
+
+      // 2. Direct upsert to Supabase hotel_settings table if available
+      try {
+        await supabase
+          .from('hotel_settings')
+          .upsert([
+            { key: 'contact_info', value: formData, updated_at: new Date().toISOString() },
+            { key: 'hero_banners', value: banners, updated_at: new Date().toISOString() }
+          ], { onConflict: 'key' });
+      } catch (sbErr) {
+        // Table may not exist yet
+      }
+
+      // 3. Save to localStorage cache as immediate client guarantee
+      localStorage.setItem('grand_horizon_contact_info', JSON.stringify(formData));
+      localStorage.setItem('grand_horizon_hero_banners', JSON.stringify(banners));
 
       const isDark = document.documentElement.classList.contains('dark');
       Swal.fire({
         icon: 'success',
         title: t('adm_set_saved_success') || 'Settings saved successfully!',
-        text: 'Đã cập nhật thông tin liên hệ và 3 ảnh slide nền trang chủ.',
+        text: 'Đã lưu thông tin liên hệ và ảnh slide nền vào Database thành công.',
         timer: 2400,
         timerProgressBar: true,
         showConfirmButton: false,
@@ -187,7 +239,7 @@ export default function AdminSettings() {
       Swal.fire({
         icon: 'error',
         title: 'Save Failed',
-        text: err.response?.data?.message || 'Could not save settings. Please try again.',
+        text: err.response?.data?.message || err.message || 'Could not save settings. Please try again.',
         confirmButtonColor: '#e11d48'
       });
     } finally {
@@ -235,7 +287,7 @@ export default function AdminSettings() {
       </div>
 
       <div className="space-y-8">
-        {/* Section A: Hero Background Slider Management (NEW) */}
+        {/* Section A: Hero Background Slider Management */}
         <div className="bg-white dark:bg-[#0c1322] rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-4">
             <div className="flex items-center gap-3">

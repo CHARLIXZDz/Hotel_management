@@ -30,7 +30,16 @@ export default function Home() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
-  const [heroImages, setHeroImages] = useState(DEFAULT_HERO_IMAGES);
+  const [heroImages, setHeroImages] = useState(() => {
+    try {
+      const cached = localStorage.getItem('grand_horizon_hero_banners');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return DEFAULT_HERO_IMAGES;
+  });
 
   // Fetch dynamic hero banners set by admin
   useEffect(() => {

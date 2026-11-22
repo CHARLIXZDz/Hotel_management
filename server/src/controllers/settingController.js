@@ -1,4 +1,4 @@
-const { supabase } = require('../services/supabase');
+const { supabaseAdmin } = require('../config/supabase');
 const fs = require('fs');
 const path = require('path');
 
@@ -21,6 +21,24 @@ const DEFAULT_HERO_BANNERS = [
   'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=2000&q=85',
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=85'
 ];
+
+// Helper to find the primary admin user ID in Supabase
+const getAdminUserId = async () => {
+  try {
+    const { data: adminProfiles } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('role', 'admin')
+      .limit(1);
+
+    if (adminProfiles && adminProfiles.length > 0) {
+      return adminProfiles[0].id;
+    }
+  } catch (err) {
+    console.warn('Could not query admin profile ID:', err.message);
+  }
+  return null;
+};
 
 // Helper to read local fallback
 const readLocalFallback = (file, defaultVal) => {
@@ -51,19 +69,41 @@ const writeLocalFallback = (file, data) => {
 // 1. Get contact settings
 exports.getContactSettings = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('hotel_settings')
-      .select('value')
-      .eq('key', 'contact_info')
-      .single();
+    // 1. Check Supabase hotel_settings table
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('hotel_settings')
+        .select('value')
+        .eq('key', 'contact_info')
+        .single();
 
-    if (!error && data?.value) {
-      return res.json({
-        success: true,
-        data: { ...DEFAULT_CONTACT_SETTINGS, ...data.value }
-      });
+      if (!error && data?.value) {
+        return res.json({
+          success: true,
+          data: { ...DEFAULT_CONTACT_SETTINGS, ...data.value }
+        });
+      }
+    } catch (e) {
+      // Table doesn't exist yet, proceed to user metadata
     }
 
+    // 2. Check Supabase Auth user metadata
+    const adminId = await getAdminUserId();
+    if (adminId) {
+      try {
+        const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(adminId);
+        if (user?.user_metadata?.contact_info) {
+          return res.json({
+            success: true,
+            data: { ...DEFAULT_CONTACT_SETTINGS, ...user.user_metadata.contact_info }
+          });
+        }
+      } catch (authErr) {
+        console.warn('Could not read contact_info from admin user_metadata:', authErr.message);
+      }
+    }
+
+    // 3. Fallback to local file
     const localData = readLocalFallback(FALLBACK_FILE, DEFAULT_CONTACT_SETTINGS);
     return res.json({
       success: true,
@@ -78,7 +118,7 @@ exports.getContactSettings = async (req, res) => {
   }
 };
 
-// 2. Update contact settings (Admin only)
+// 2. Update contact settings
 exports.updateContactSettings = async (req, res) => {
   try {
     const {
@@ -103,17 +143,36 @@ exports.updateContactSettings = async (req, res) => {
       address: address || DEFAULT_CONTACT_SETTINGS.address
     };
 
+    // A. Always save to local file
     writeLocalFallback(FALLBACK_FILE, updatedSettings);
 
+    // B. Save to Supabase Auth metadata for persistent database cloud storage
+    const adminId = (req.user && req.user.id) || (await getAdminUserId());
+    if (adminId) {
+      try {
+        const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(adminId);
+        const existingMeta = user?.user_metadata || {};
+        await supabaseAdmin.auth.admin.updateUserById(adminId, {
+          user_metadata: {
+            ...existingMeta,
+            contact_info: updatedSettings
+          }
+        });
+      } catch (authErr) {
+        console.warn('Could not save to Supabase user_metadata:', authErr.message);
+      }
+    }
+
+    // C. Try upserting to hotel_settings table if it exists
     try {
-      await supabase
+      await supabaseAdmin
         .from('hotel_settings')
         .upsert(
           { key: 'contact_info', value: updatedSettings, updated_at: new Date().toISOString() },
           { onConflict: 'key' }
         );
     } catch (dbErr) {
-      console.warn('Could not upsert contact_info to Supabase hotel_settings:', dbErr.message);
+      // Ignore if table does not exist
     }
 
     return res.json({
@@ -133,19 +192,41 @@ exports.updateContactSettings = async (req, res) => {
 // 3. Get Hero Banners
 exports.getHeroBanners = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('hotel_settings')
-      .select('value')
-      .eq('key', 'hero_banners')
-      .single();
+    // 1. Check Supabase hotel_settings table
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('hotel_settings')
+        .select('value')
+        .eq('key', 'hero_banners')
+        .single();
 
-    if (!error && data?.value && Array.isArray(data.value) && data.value.length > 0) {
-      return res.json({
-        success: true,
-        data: data.value
-      });
+      if (!error && data?.value && Array.isArray(data.value) && data.value.length > 0) {
+        return res.json({
+          success: true,
+          data: data.value
+        });
+      }
+    } catch (e) {
+      // Table doesn't exist yet
     }
 
+    // 2. Check Supabase Auth admin user metadata
+    const adminId = await getAdminUserId();
+    if (adminId) {
+      try {
+        const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(adminId);
+        if (user?.user_metadata?.hero_banners && Array.isArray(user.user_metadata.hero_banners)) {
+          return res.json({
+            success: true,
+            data: user.user_metadata.hero_banners
+          });
+        }
+      } catch (authErr) {
+        console.warn('Could not read hero_banners from admin user_metadata:', authErr.message);
+      }
+    }
+
+    // 3. Fallback to local file
     const localBanners = readLocalFallback(BANNERS_FALLBACK_FILE, DEFAULT_HERO_BANNERS);
     return res.json({
       success: true,
@@ -160,7 +241,7 @@ exports.getHeroBanners = async (req, res) => {
   }
 };
 
-// 4. Update Hero Banners (Admin only)
+// 4. Update Hero Banners
 exports.updateHeroBanners = async (req, res) => {
   try {
     const { banners } = req.body;
@@ -171,17 +252,36 @@ exports.updateHeroBanners = async (req, res) => {
       });
     }
 
+    // A. Save to local file
     writeLocalFallback(BANNERS_FALLBACK_FILE, banners);
 
+    // B. Save to Supabase Auth metadata for persistent database cloud storage
+    const adminId = (req.user && req.user.id) || (await getAdminUserId());
+    if (adminId) {
+      try {
+        const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(adminId);
+        const existingMeta = user?.user_metadata || {};
+        await supabaseAdmin.auth.admin.updateUserById(adminId, {
+          user_metadata: {
+            ...existingMeta,
+            hero_banners: banners
+          }
+        });
+      } catch (authErr) {
+        console.warn('Could not save banners to Supabase user_metadata:', authErr.message);
+      }
+    }
+
+    // C. Try upserting to hotel_settings table if it exists
     try {
-      await supabase
+      await supabaseAdmin
         .from('hotel_settings')
         .upsert(
           { key: 'hero_banners', value: banners, updated_at: new Date().toISOString() },
           { onConflict: 'key' }
         );
     } catch (dbErr) {
-      console.warn('Could not upsert hero_banners to Supabase hotel_settings:', dbErr.message);
+      // Ignore if table does not exist
     }
 
     return res.json({

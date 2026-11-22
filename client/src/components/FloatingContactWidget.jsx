@@ -17,8 +17,23 @@ export default function FloatingContactWidget() {
     hotline: '+84 90 123 4567'
   });
 
-  // Fetch dynamic settings from API
+  // Fetch dynamic settings from API or localStorage cache
   useEffect(() => {
+    // 1. Immediate read from localStorage cache
+    try {
+      const cached = localStorage.getItem('grand_horizon_contact_info');
+      if (cached) {
+        const d = JSON.parse(cached);
+        setContactSettings({
+          messenger_url: d.messenger_url || 'https://m.me/grandhorizonresort',
+          zalo_url: d.zalo_url || (d.zalo_phone ? `https://zalo.me/${d.zalo_phone.replace(/\D/g, '')}` : 'https://zalo.me/0901234567'),
+          whatsapp_url: d.whatsapp_url || (d.whatsapp_phone ? `https://wa.me/${d.whatsapp_phone.replace(/\D/g, '')}` : 'https://wa.me/84901234567'),
+          hotline: d.hotline || '+84 90 123 4567'
+        });
+      }
+    } catch (e) {}
+
+    // 2. Fetch fresh from API
     const fetchSettings = async () => {
       try {
         const res = await api.get('/settings/contact');
