@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import FlagIcon from './FlagIcon';
 import {
   Hotel,
   User,
@@ -33,12 +34,12 @@ export default function Navbar() {
   };
 
   const languages = [
-    { code: 'en', flag: '🇬🇧', label: 'English' },
-    { code: 'lo', flag: '🇱🇦', label: 'ພາສາລາວ' },
-    { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
+    { code: 'en', label: 'English' },
+    { code: 'lo', label: 'ພາສາລາວ' },
+    { code: 'vi', label: 'Tiếng Việt' },
   ];
 
-  const currentLang = languages.find((l) => l.code === language) || languages[1]; // default Lao
+  const currentLang = languages.find((l) => l.code === language) || languages[1];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -87,16 +88,16 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* Right Section: Language Flag Button with Dropdown + Theme Switcher + Auth */}
+        {/* Right Section: Flag Button + Theme Toggle + Auth */}
         <div className="hidden md:flex items-center gap-3">
-          {/* Flag-only Trigger Button with Exact Dropdown from Image */}
+          {/* Flag Button (Vector SVG Flag - NEVER shows letters 'GB' or 'LA') */}
           <div className="relative" ref={langRef}>
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="w-11 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/90 text-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm"
+              className="w-12 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm overflow-hidden"
               title="Change Language"
             >
-              <span className="leading-none">{currentLang.flag}</span>
+              <FlagIcon code={currentLang.code} className="w-7 h-5 rounded-[4px] shadow-sm object-cover" />
             </button>
 
             {/* Dropdown Menu (English, ພາສາລາວ, Tiếng Việt) */}
@@ -119,7 +120,7 @@ export default function Navbar() {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-lg leading-none">{l.flag}</span>
+                          <FlagIcon code={l.code} className="w-6 h-4.5 rounded-[3px] shadow-sm object-cover flex-shrink-0" />
                           <span>{l.label}</span>
                         </div>
                         {isSelected && (
@@ -133,10 +134,10 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Theme Toggle Button (Matching rounded-2xl icon style) */}
+          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="w-11 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/90 text-slate-700 dark:text-emerald-400 flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm"
+            className="w-11 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 text-slate-700 dark:text-emerald-400 flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm"
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {theme === 'dark' ? <Moon className="w-5 h-5 text-emerald-400 stroke-[2.2]" /> : <Sun className="w-5 h-5 text-amber-500 stroke-[2.2]" />}
@@ -221,13 +222,13 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Actions: Flag + Theme + Hamburger */}
+        {/* Mobile Actions */}
         <div className="flex items-center gap-2 md:hidden">
           <button
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-xl flex items-center justify-center"
+            className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex items-center justify-center overflow-hidden"
           >
-            <span>{currentLang.flag}</span>
+            <FlagIcon code={currentLang.code} className="w-6 h-4.5 rounded-[3px] shadow-sm object-cover" />
           </button>
 
           <button
@@ -250,8 +251,8 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0b1120] px-4 pt-3 pb-6 space-y-3">
           <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">ເລືອກພາສາ / Language</span>
-            <div className="flex gap-1.5">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Language</span>
+            <div className="flex gap-2">
               {languages.map((l) => (
                 <button
                   key={l.code}
@@ -259,14 +260,14 @@ export default function Navbar() {
                     setLanguage(l.code);
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
+                  className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
                     language === l.code
-                      ? 'bg-emerald-500 text-slate-950 shadow-md font-bold'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                      ? 'bg-slate-800 text-emerald-400 ring-1 ring-emerald-500'
+                      : 'bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300'
                   }`}
                 >
-                  <span>{l.flag}</span>
-                  <span>{l.code.toUpperCase()}</span>
+                  <FlagIcon code={l.code} className="w-5 h-3.5 rounded-[2px] object-cover" />
+                  <span>{l.label}</span>
                 </button>
               ))}
             </div>
