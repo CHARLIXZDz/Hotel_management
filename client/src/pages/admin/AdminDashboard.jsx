@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   CalendarCheck2,
   DollarSign,
-  BedDouble,
   Users,
-  CheckCircle,
   Clock,
   ArrowRight
 } from 'lucide-react';
 
 export default function AdminDashboard() {
+  const { t } = useLanguage();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,102 +40,102 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-          ภาพรวมการดำเนินงานโรงแรม
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          {t('adm_dashboard_title')}
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          สถิติยอดการจอง รายได้ที่เก็บแล้ว และสถานะห้องพักแบบเรียลไทม์
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          {t('adm_dashboard_sub')}
         </p>
       </div>
 
       {/* Stats Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Bookings */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0">
+        <div className="bg-white dark:bg-[#0f172a] p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+          <div className="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center flex-shrink-0">
             <CalendarCheck2 className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs text-slate-400 font-medium block">การจองทั้งหมด</span>
-            <span className="text-2xl font-bold text-slate-900">{stats?.totalBookings || 0} รายการ</span>
+            <span className="text-xs text-slate-400 font-medium block">{t('adm_total_bookings')}</span>
+            <span className="text-2xl font-bold text-slate-900 dark:text-white">{stats?.totalBookings || 0}</span>
           </div>
         </div>
 
         {/* Revenue Collected */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+        <div className="bg-white dark:bg-[#0f172a] p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
             <DollarSign className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs text-slate-400 font-medium block">รายได้ที่เก็บแล้ว</span>
-            <span className="text-2xl font-bold text-emerald-700">฿{(stats?.totalRevenue || 0).toLocaleString()}</span>
+            <span className="text-xs text-slate-400 font-medium block">{t('adm_revenue_collected')}</span>
+            <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">฿{(stats?.totalRevenue || 0).toLocaleString()}</span>
           </div>
         </div>
 
         {/* Currently Checked In */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+        <div className="bg-white dark:bg-[#0f172a] p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+          <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs text-slate-400 font-medium block">กำลังเข้าพัก</span>
-            <span className="text-2xl font-bold text-slate-900">{stats?.checkedInCount || 0} ห้อง</span>
+            <span className="text-xs text-slate-400 font-medium block">{t('adm_currently_staying')}</span>
+            <span className="text-2xl font-bold text-slate-900 dark:text-white">{stats?.checkedInCount || 0} {t('detail_room_unit')}</span>
           </div>
         </div>
 
         {/* Pending Check-ins */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+        <div className="bg-white dark:bg-[#0f172a] p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs text-slate-400 font-medium block">รอการเช็คอิน</span>
-            <span className="text-2xl font-bold text-amber-600">{stats?.confirmedCount || 0} รายการ</span>
+            <span className="text-xs text-slate-400 font-medium block">{t('adm_pending_checkins')}</span>
+            <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats?.confirmedCount || 0}</span>
           </div>
         </div>
       </div>
 
       {/* Recent Bookings Table */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 sm:p-8 transition-colors">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-slate-900">รายการจองล่าสุด 5 รายการ</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('adm_recent_5')}</h2>
           <Link
             to="/admin/bookings"
-            className="text-xs font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1"
+            className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 flex items-center gap-1"
           >
-            <span>ดูรายการทั้งหมด</span>
+            <span>{t('adm_view_all')}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="text-xs text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-3">
+          <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+            <thead className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-3">
               <tr>
-                <th className="py-3 px-4">รหัสการจอง</th>
-                <th className="py-3 px-4">ชื่อผู้เข้าพัก</th>
-                <th className="py-3 px-4">ประเภทห้อง</th>
-                <th className="py-3 px-4">ช่วงเวลา</th>
-                <th className="py-3 px-4">ยอดเงิน</th>
-                <th className="py-3 px-4">สถานะ</th>
+                <th className="py-3 px-4">{t('adm_col_code')}</th>
+                <th className="py-3 px-4">{t('adm_col_guest')}</th>
+                <th className="py-3 px-4">{t('adm_col_room')}</th>
+                <th className="py-3 px-4">{t('adm_col_period')}</th>
+                <th className="py-3 px-4">{t('adm_col_amount')}</th>
+                <th className="py-3 px-4">{t('adm_col_status')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {stats?.recentBookings && stats.recentBookings.length > 0 ? (
                 stats.recentBookings.map((b) => (
-                  <tr key={b.id} className="hover:bg-slate-50/50">
-                    <td className="py-3 px-4 font-mono font-bold text-slate-900">{b.booking_code}</td>
+                  <tr key={b.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition">
+                    <td className="py-3 px-4 font-mono font-bold text-slate-900 dark:text-white">{b.booking_code}</td>
                     <td className="py-3 px-4">{b.guest_name}</td>
                     <td className="py-3 px-4">{b.room_types?.name}</td>
                     <td className="py-3 px-4 text-xs">{b.check_in} → {b.check_out}</td>
-                    <td className="py-3 px-4 font-semibold text-slate-900">฿{Number(b.total_price).toLocaleString()}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">฿{Number(b.total_price).toLocaleString()}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        b.status === 'confirmed' ? 'bg-sky-50 text-sky-700' :
-                        b.status === 'checked_in' ? 'bg-emerald-50 text-emerald-700' :
-                        b.status === 'checked_out' ? 'bg-purple-50 text-purple-700' : 'bg-rose-50 text-rose-700'
+                        b.status === 'confirmed' ? 'bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300' :
+                        b.status === 'checked_in' ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' :
+                        b.status === 'checked_out' ? 'bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300' : 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
                       }`}>
                         {b.status}
                       </span>
@@ -144,7 +144,9 @@ export default function AdminDashboard() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="text-center py-6 text-slate-400">ยังไม่มีรายการจอง</td>
+                  <td colSpan={6} className="text-center py-8 text-slate-400">
+                    {t('adm_no_bookings')}
+                  </td>
                 </tr>
               )}
             </tbody>

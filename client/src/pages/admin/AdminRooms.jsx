@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   Plus,
   Pencil,
   Trash2,
   X,
-  Check,
   AlertCircle,
-  BedDouble,
   Users
 } from 'lucide-react';
 
 export default function AdminRooms() {
+  const { t } = useLanguage();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -122,32 +122,32 @@ export default function AdminRooms() {
       fetchRooms();
     } catch (err) {
       console.error('Save room error:', err);
-      setErrorMsg(err.response?.data?.message || 'บันทึกข้อมูลไม่สำเร็จ');
+      setErrorMsg(err.response?.data?.message || 'Failed to save room.');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteRoom = async (id) => {
-    if (!window.confirm('คุณต้องการลบประเภทห้องพักนี้ใช่หรือไม่?')) return;
+    if (!window.confirm('Are you sure you want to delete this room type?')) return;
 
     try {
       await api.delete(`/rooms/${id}`);
       fetchRooms();
     } catch (err) {
-      alert(err.response?.data?.message || 'ไม่สามารถลบห้องพักได้');
+      alert(err.response?.data?.message || 'Cannot delete room.');
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-            จัดการประเภทห้องพัก
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+            {t('adm_rooms_title')}
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            เพิ่ม ลบ แก้ไขห้องพัก กำหนดราคา ความจุ และจำนวนห้องว่าง
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {t('adm_rooms_sub')}
           </p>
         </div>
 
@@ -156,21 +156,21 @@ export default function AdminRooms() {
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-bold text-sm rounded-xl shadow-md transition"
         >
           <Plus className="w-4 h-4" />
-          <span>เพิ่มประเภทห้องพักใหม่</span>
+          <span>{t('adm_btn_add_room')}</span>
         </button>
       </div>
 
       {loading ? (
         <div className="py-20 text-center">
           <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm text-slate-500">กำลังโหลดรายการห้องพัก...</p>
+          <p className="text-sm text-slate-500">Loading rooms...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {rooms.map((r) => (
             <div
               key={r.id}
-              className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm flex flex-col justify-between"
+              className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between transition"
             >
               <div>
                 <img
@@ -180,39 +180,39 @@ export default function AdminRooms() {
                 />
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-bold text-base text-slate-900">{r.name}</h3>
-                    <span className="text-sm font-extrabold text-amber-700 whitespace-nowrap">
+                    <h3 className="font-bold text-base text-slate-900 dark:text-white">{r.name}</h3>
+                    <span className="text-sm font-extrabold text-amber-600 dark:text-amber-400 whitespace-nowrap">
                       ฿{Number(r.price_per_night).toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-2 leading-relaxed">
                     {r.description}
                   </p>
-                  <div className="flex items-center gap-4 mt-4 text-xs text-slate-500 border-t border-slate-100 pt-3">
+                  <div className="flex items-center gap-4 mt-4 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-3">
                     <span className="flex items-center gap-1">
                       <Users className="w-3.5 h-3.5" />
-                      {r.capacity} ท่าน
+                      {r.capacity} {t('search_guests')}
                     </span>
                     <span>•</span>
                     <span>{r.bed_type}</span>
                     <span>•</span>
-                    <span className="font-semibold text-slate-700">มีทั้งหมด {r.total_rooms} ห้อง</span>
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">{r.total_rooms} {t('detail_room_unit')}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
                 <button
                   onClick={() => openEditModal(r)}
-                  className="p-2 text-slate-600 hover:text-amber-700 hover:bg-amber-100 rounded-lg transition"
-                  title="แก้ไข"
+                  className="p-2 text-slate-600 dark:text-slate-300 hover:text-amber-600 hover:bg-amber-100 dark:hover:bg-slate-700 rounded-lg transition"
+                  title="Edit"
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDeleteRoom(r.id)}
-                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                  title="ลบ"
+                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-700 rounded-lg transition"
+                  title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -224,21 +224,21 @@ export default function AdminRooms() {
 
       {/* Modal for Add / Edit */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl bg-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-xl bg-white dark:bg-[#0f172a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100 dark:border-slate-800">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-xl font-bold text-slate-900 mb-4">
-              {editingRoom ? 'แก้ไขประเภทห้องพัก' : 'เพิ่มประเภทห้องพักใหม่'}
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+              {editingRoom ? 'Edit Room Type' : t('adm_btn_add_room')}
             </h2>
 
             {errorMsg && (
-              <div className="mb-4 p-3 bg-red-50 text-red-700 text-xs rounded-xl flex items-center gap-2">
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 text-xs rounded-xl flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" />
                 <span>{errorMsg}</span>
               </div>
@@ -246,111 +246,111 @@ export default function AdminRooms() {
 
             <form onSubmit={handleSaveRoom} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">ชื่อประเภทห้องพัก *</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Room Name *</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="เช่น Deluxe Ocean View Villa"
-                  className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
+                  placeholder="e.g. Deluxe Ocean View Villa"
+                  className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">คำอธิบายห้องพัก</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</label>
                 <textarea
                   rows={3}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="รายละเอียดความพิเศษ วิว หรือรูปแบบห้อง..."
-                  className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
+                  placeholder="Room features, view, details..."
+                  className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
                 ></textarea>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">ราคาต่อคืน (บาท) *</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Price per night (THB) *</label>
                   <input
                     type="number"
                     required
                     min={0}
                     value={formData.price_per_night}
                     onChange={(e) => setFormData({ ...formData, price_per_night: e.target.value })}
-                    className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">จำนวนห้องทั้งหมดในโรงแรม *</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Total Rooms *</label>
                   <input
                     type="number"
                     required
                     min={1}
                     value={formData.total_rooms}
                     onChange={(e) => setFormData({ ...formData, total_rooms: e.target.value })}
-                    className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">รองรับ (ท่าน)</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Capacity</label>
                   <input
                     type="number"
                     min={1}
                     value={formData.capacity}
                     onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">ขนาด (ตร.ม.)</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Size (sq.m.)</label>
                   <input
                     type="number"
                     min={10}
                     value={formData.size_sqm}
                     onChange={(e) => setFormData({ ...formData, size_sqm: e.target.value })}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">รูปแบบเตียง</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Bed Type</label>
                   <input
                     type="text"
                     value={formData.bed_type}
                     onChange={(e) => setFormData({ ...formData, bed_type: e.target.value })}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  สิ่งอำนวยความสะดวก (คั่นด้วยเครื่องหมายจุลภาค ,)
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Amenities (comma separated)
                 </label>
                 <input
                   type="text"
                   value={formData.amenities}
                   onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
                   placeholder="Free Wi-Fi, Jacuzzi, Balcony, Mini Bar"
-                  className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  ลิงก์รูปภาพห้องพัก (1 บรรทัดต่อ 1 URL)
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Image URLs (1 per line)
                 </label>
                 <textarea
                   rows={3}
                   value={formData.images}
                   onChange={(e) => setFormData({ ...formData, images: e.target.value })}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full px-3.5 py-2 text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  className="w-full px-3.5 py-2 text-xs font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl outline-none"
                 ></textarea>
               </div>
 
@@ -358,16 +358,16 @@ export default function AdminRooms() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-sm font-medium"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium"
                 >
-                  ยกเลิก
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
                   className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-sm font-bold shadow-md disabled:opacity-50"
                 >
-                  {saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}
+                  {saving ? 'Saving...' : 'Save Room'}
                 </button>
               </div>
             </form>
