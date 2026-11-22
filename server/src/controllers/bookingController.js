@@ -188,9 +188,28 @@ const updateBookingStatus = async (req, res) => {
   }
 };
 
+// Public: Get recent real bookings from database for live social proof
+const getRecentBookingsForSocialProof = async (req, res) => {
+  try {
+    const { data: bookings, error } = await supabaseAdmin
+      .from('bookings')
+      .select('id, guest_name, created_at, room_types(name)')
+      .order('created_at', { ascending: false })
+      .limit(8);
+
+    if (error) throw error;
+
+    return res.json({ success: true, data: bookings || [] });
+  } catch (err) {
+    console.error('getRecentBookingsForSocialProof error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to fetch recent bookings' });
+  }
+};
+
 module.exports = {
   createBooking,
   getMyBookings,
   getAllBookings,
-  updateBookingStatus
+  updateBookingStatus,
+  getRecentBookingsForSocialProof
 };

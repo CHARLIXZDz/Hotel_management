@@ -4,9 +4,13 @@ const {
   createBooking,
   getMyBookings,
   getAllBookings,
-  updateBookingStatus
+  updateBookingStatus,
+  getRecentBookingsForSocialProof
 } = require('../controllers/bookingController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+
+// Public route for live recent bookings social proof
+router.get('/recent-social', getRecentBookingsForSocialProof);
 
 // Guest routes (requires login)
 router.post('/', requireAuth, createBooking);

@@ -93,6 +93,35 @@ export const AuthProvider = ({ children }) => {
     setAuthModalOpen(false);
   };
 
+  const updateProfileAvatar = async (avatarUrl, newFullName) => {
+    const updateData = {};
+    if (avatarUrl !== undefined) updateData.avatar_url = avatarUrl;
+    if (newFullName) updateData.full_name = newFullName;
+
+    const { data, error } = await supabase.auth.updateUser({
+      data: updateData
+    });
+    if (error) throw error;
+
+    if (data?.user) {
+      setUser(data.user);
+      if (user?.id) {
+        try {
+          await supabase
+            .from('profiles')
+            .update({
+              ...(newFullName ? { full_name: newFullName } : {}),
+              ...(avatarUrl ? { avatar_url: avatarUrl } : {})
+            })
+            .eq('id', user.id);
+          await fetchProfile(user.id);
+        } catch (e) {}
+      }
+    }
+
+    return data;
+  };
+
   const isAdmin = profile?.role === 'admin' || user?.user_metadata?.role === 'admin';
 
   return (
@@ -105,6 +134,7 @@ export const AuthProvider = ({ children }) => {
         signIn,
         signUp,
         signOut,
+        updateProfileAvatar,
         authModalOpen,
         authModalMode,
         openAuthModal,

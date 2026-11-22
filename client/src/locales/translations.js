@@ -63,6 +63,14 @@ export const translations = {
     detail_amenities_title: 'ສິ່ງອຳນວຍຄວາມສະດວກໃນຫ້ອງ',
     detail_reviews_title: 'ຣີວິວຈາກຜູ້ເຂົ້າພັກຈິງ',
     detail_no_reviews: 'ຍັງບໍ່ມີຣີວິວສຳລັບຫ້ອງພັກນີ້',
+    detail_write_review: 'ຂຽນຣີວິວ & ໃຫ້ຄະແນນຫ້ອງນີ້',
+    detail_review_rating_label: 'ຄະແນນຄວາມພໍໃຈ',
+    detail_review_comment_label: 'ຄວາມຄິດເຫັນ ຫຼື ປະສົບການຂອງທ່ານ',
+    detail_review_placeholder: 'ແບ່ງປັນປະສົບການຂອງທ່ານກ່ຽວກັບຫ້ອງພັກນີ້...',
+    detail_review_submit: 'ສົ່ງຣີວິວ',
+    detail_review_submitting: 'ກຳລັງສົ່ງ...',
+    detail_review_success: 'ສົ່ງຣີວິວສຳເລັດແລ້ວ! ຂອບໃຈຫຼາຍໆ',
+    detail_review_login_prompt: 'ເຂົ້າສູ່ລະບົບເພື່ອຂຽນຣີວິວ ແລະ ໃຫ້ຄະແນນຫ້ອງນີ້',
     detail_summary_title: 'ສະຫຼຸບລາຄາຈອງ',
     detail_room_count: 'ຈຳນວນຫ້ອງ',
     detail_room_unit: 'ຫ້ອງ',
@@ -210,6 +218,14 @@ export const translations = {
     adm_set_upload_banners: 'ອັບໂຫຼດຮູບແບນເນີຈາກຄອມພິວເຕີ',
     adm_set_add_banner_url: 'ຫຼື ເພີ່ມລິ້ງ URL ຮູບພາບ',
     adm_set_reset_default_banners: 'ຄືນຄ່າຮູບພາບມາດຕະຖານ',
+
+    // Profile & Reviews
+    nav_profile_avatar: 'ໂປຣໄຟລ໌ & ຮູບປະຈຳຕົວ',
+    rev_write_title: 'ຂຽນຄວາມຄິດເຫັນ & ໃຫ້ຄະແນນຫ້ອງພັກ',
+    rev_comment_placeholder: 'ແບ່ງປັນປະສົບການ ຫຼື ຄວາມຄິດເຫັນຂອງທ່ານກ່ຽວກັບຫ້ອງພັກນີ້...',
+    rev_submit_btn: 'ສົ່ງຄວາມຄິດເຫັນ',
+    rev_login_prompt: 'ເຂົ້າສູ່ລະບົບເພື່ອຂຽນຄວາມຄິດເຫັນ ແລະ ໃຫ້ຄະແນນຫ້ອງພັກ',
+    rev_success_msg: 'ສົ່ງຄວາມຄິດເຫັນຮຽບຮ້ອຍແລ້ວ! ຂອບໃຈຫຼາຍໆ',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -276,6 +292,14 @@ export const translations = {
     detail_amenities_title: 'Tiện nghi trong phòng',
     detail_reviews_title: 'Đánh giá từ khách hàng',
     detail_no_reviews: 'Chưa có đánh giá nào cho phòng này.',
+    detail_write_review: 'Viết đánh giá & bình luận phòng này',
+    detail_review_rating_label: 'Đánh giá của bạn',
+    detail_review_comment_label: 'Bình luận / Trải nghiệm của bạn',
+    detail_review_placeholder: 'Chia sẻ cảm nhận của bạn về phòng này...',
+    detail_review_submit: 'Gửi bình luận',
+    detail_review_submitting: 'Đang gửi...',
+    detail_review_success: 'Gửi bình luận thành công! Cảm ơn bạn',
+    detail_review_login_prompt: 'Đăng nhập để viết đánh giá & bình luận phòng này',
     detail_summary_title: 'Tóm tắt đặt phòng',
     detail_room_count: 'Số lượng phòng',
     detail_room_unit: 'phòng',
@@ -423,6 +447,14 @@ export const translations = {
     adm_set_upload_banners: 'Tải ảnh slide từ máy tính của bạn',
     adm_set_add_banner_url: 'Hoặc thêm bằng đường dẫn URL ảnh',
     adm_set_reset_default_banners: 'Khôi phục ảnh mẫu mặc định',
+
+    // Profile & Reviews
+    nav_profile_avatar: 'Hồ sơ & Ảnh đại diện',
+    rev_write_title: 'Viết bình luận & Đánh giá phòng',
+    rev_comment_placeholder: 'Chia sẻ cảm nhận hoặc nhận xét của bạn về phòng nghỉ này...',
+    rev_submit_btn: 'Gửi bình luận',
+    rev_login_prompt: 'Đăng nhập để viết bình luận và đánh giá phòng',
+    rev_success_msg: 'Đã gửi bình luận thành công! Cảm ơn bạn',
   },
 
   // 3. English
@@ -489,6 +521,14 @@ export const translations = {
     detail_amenities_title: 'Room Amenities',
     detail_reviews_title: 'Guest Reviews',
     detail_no_reviews: 'No reviews yet for this room.',
+    detail_write_review: 'Write a Review & Rate this Room',
+    detail_review_rating_label: 'Your Rating',
+    detail_review_comment_label: 'Your Review & Feedback',
+    detail_review_placeholder: 'Share your experience staying in this room...',
+    detail_review_submit: 'Submit Review',
+    detail_review_submitting: 'Submitting...',
+    detail_review_success: 'Review submitted successfully! Thank you',
+    detail_review_login_prompt: 'Sign in to write a review & rate this room',
     detail_summary_title: 'Booking Summary',
     detail_room_count: 'Rooms',
     detail_room_unit: 'room(s)',
@@ -636,5 +676,13 @@ export const translations = {
     adm_set_upload_banners: 'Upload banner photos from your computer',
     adm_set_add_banner_url: 'Or add image via direct URL',
     adm_set_reset_default_banners: 'Restore Default Luxury Photos',
+
+    // Profile & Reviews
+    nav_profile_avatar: 'Profile & Avatar',
+    rev_write_title: 'Write a Review & Comment',
+    rev_comment_placeholder: 'Share your experience or thoughts about this room...',
+    rev_submit_btn: 'Submit Review',
+    rev_login_prompt: 'Sign in to leave a review and comment on this room',
+    rev_success_msg: 'Review submitted successfully! Thank you',
   }
 };

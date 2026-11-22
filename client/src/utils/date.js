@@ -26,8 +26,10 @@ export const formatDateDDMMYY = (dateString, shortYear = false) => {
 };
 
 export const formatDate = formatDateDDMMYY;
+export const formatDisplayDate = formatDateDDMMYY;
 
 export default {
   formatDateDDMMYY,
-  formatDate
+  formatDate,
+  formatDisplayDate
 };

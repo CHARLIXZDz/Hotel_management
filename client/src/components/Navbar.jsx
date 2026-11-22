@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import FlagIcon from './FlagIcon';
+import ProfileModal from './ProfileModal';
 import { confirmLogout, notifyLogoutSuccess } from '../utils/alert';
 import {
   Hotel,
@@ -24,6 +25,7 @@ export default function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const langRef = useRef(null);
   const navigate = useNavigate();
@@ -155,10 +157,18 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2.5 py-1.5 px-3 rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                className="flex items-center gap-2.5 py-1 px-3 rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
               >
-                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 font-semibold flex items-center justify-center text-sm">
-                  {(profile?.full_name || user.email || 'U')[0].toUpperCase()}
+                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 font-semibold flex items-center justify-center text-sm overflow-hidden">
+                  {(user?.user_metadata?.avatar_url || profile?.avatar_url) ? (
+                    <img
+                      src={user?.user_metadata?.avatar_url || profile?.avatar_url}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    (profile?.full_name || user.email || 'U')[0].toUpperCase()
+                  )}
                 </div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200 max-w-[120px] truncate">
                   {profile?.full_name || user.email.split('@')[0]}
@@ -176,6 +186,18 @@ export default function Navbar() {
                       </span>
                     )}
                   </div>
+
+                  {/* Profile & Avatar Modal Trigger */}
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      setProfileModalOpen(true);
+                    }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary-600 transition"
+                  >
+                    <User className="w-4 h-4 text-slate-400" />
+                    <span>{t('nav_profile_avatar')}</span>
+                  </button>
 
                   <Link
                     to="/my-bookings"
@@ -352,6 +374,12 @@ export default function Navbar() {
           )}
         </div>
       )}
+
+      {/* Profile & Avatar Modal */}
+      <ProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+      />
     </header>
   );
 }

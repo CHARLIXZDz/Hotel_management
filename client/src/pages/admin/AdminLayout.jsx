@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import FlagIcon from '../../components/FlagIcon';
+import ProfileModal from '../../components/ProfileModal';
 import { confirmLogout, notifyLogoutSuccess } from '../../utils/alert';
 import {
   LayoutDashboard,
@@ -26,6 +27,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
 
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const langRef = useRef(null);
 
   const languages = [
@@ -222,10 +224,25 @@ export default function AdminLayout() {
 
             {/* Admin Profile & Logout */}
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 font-bold flex items-center justify-center text-xs">
-                {(profile?.full_name || user.email || 'A')[0].toUpperCase()}
+              <div
+                onClick={() => setProfileModalOpen(true)}
+                className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 font-bold flex items-center justify-center text-xs overflow-hidden cursor-pointer hover:ring-2 hover:ring-amber-500 transition shadow-sm"
+                title="Thay đổi ảnh đại diện Admin"
+              >
+                {(user?.user_metadata?.avatar_url || profile?.avatar_url) ? (
+                  <img
+                    src={user?.user_metadata?.avatar_url || profile?.avatar_url}
+                    alt="Admin Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  (profile?.full_name || user.email || 'A')[0].toUpperCase()
+                )}
               </div>
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline max-w-[140px] truncate">
+              <span
+                onClick={() => setProfileModalOpen(true)}
+                className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline max-w-[140px] truncate cursor-pointer hover:text-amber-500 transition"
+              >
                 {profile?.full_name || user.email.split('@')[0]}
               </span>
               <button
@@ -244,6 +261,12 @@ export default function AdminLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Admin Profile & Avatar Modal */}
+      <ProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+      />
     </div>
   );
 }
