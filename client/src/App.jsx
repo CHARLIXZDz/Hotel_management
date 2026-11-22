@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import LiveSocialProof from './components/LiveSocialProof';
+import FloatingContactWidget from './components/FloatingContactWidget';
 
 // Pages
 import Home from './pages/Home';
@@ -27,6 +28,7 @@ function PublicLayout() {
       <Navbar />
       <AuthModal />
       <LiveSocialProof />
+      <FloatingContactWidget />
       <main className="flex-1">
         <Outlet />
       </main>

@@ -180,6 +180,13 @@ export const translations = {
     swal_logout_success_text: 'ຫວັງວ່າຈະໄດ້ຕ້ອນຮັບທ່ານອີກຄັ້ງ',
     swal_register_success_title: 'ລົງທະບຽນສຳເລັດແລ້ວ!',
     swal_register_success_text: 'ສ້າງບັນຊີສຳເລັດ, ກະລຸນາເຂົ້າສູ່ລະບົບ',
+
+    // Floating Contact
+    contact_widget_title: 'ຕິດຕໍ່ພວກເຮົາ (24/7)',
+    contact_messenger: 'ສົນທະນາຜ່ານ Messenger',
+    contact_zalo: 'ສົນທະນາຜ່ານ Zalo',
+    contact_whatsapp: 'ສົນທະນາຜ່ານ WhatsApp',
+    contact_hotline: 'ສາຍດ່ວນ 24/7',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -363,6 +370,13 @@ export const translations = {
     swal_logout_success_text: 'Hẹn gặp lại quý khách trong kỳ nghỉ tới',
     swal_register_success_title: 'Đăng ký tài khoản thành công!',
     swal_register_success_text: 'Tài khoản đã được tạo, vui lòng đăng nhập',
+
+    // Floating Contact
+    contact_widget_title: 'Liên hệ hỗ trợ (24/7)',
+    contact_messenger: 'Chat qua Facebook Messenger',
+    contact_zalo: 'Chat qua Zalo',
+    contact_whatsapp: 'Chat qua WhatsApp',
+    contact_hotline: 'Hotline tư vấn 24/7',
   },
 
   // 3. English
@@ -546,5 +560,12 @@ export const translations = {
     swal_logout_success_text: 'We look forward to welcoming you back',
     swal_register_success_title: 'Registration Successful!',
     swal_register_success_text: 'Account created successfully. Please sign in.',
+
+    // Floating Contact
+    contact_widget_title: 'Contact Concierge (24/7)',
+    contact_messenger: 'Chat on Messenger',
+    contact_zalo: 'Chat on Zalo',
+    contact_whatsapp: 'Chat on WhatsApp',
+    contact_hotline: '24/7 Hotline Support',
   }
 };
