@@ -242,3 +242,33 @@ VALUES
     ]
 )
 ON CONFLICT (slug) DO NOTHING;
+
+-- 7. Supabase Storage Setup for Room Images
+-- Creates public bucket 'room-images' if not already existing
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('room-images', 'room-images', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Allow public read access to all room images
+DROP POLICY IF EXISTS "Public can view room images" ON storage.objects;
+CREATE POLICY "Public can view room images" 
+ON storage.objects FOR SELECT 
+USING (bucket_id = 'room-images');
+
+-- Allow authenticated users to upload room images
+DROP POLICY IF EXISTS "Authenticated users can upload room images" ON storage.objects;
+CREATE POLICY "Authenticated users can upload room images" 
+ON storage.objects FOR INSERT 
+WITH CHECK (bucket_id = 'room-images');
+
+-- Allow update & delete on room images
+DROP POLICY IF EXISTS "Users can update their room images" ON storage.objects;
+CREATE POLICY "Users can update their room images" 
+ON storage.objects FOR UPDATE 
+USING (bucket_id = 'room-images');
+
+DROP POLICY IF EXISTS "Users can delete room images" ON storage.objects;
+CREATE POLICY "Users can delete room images" 
+ON storage.objects FOR DELETE 
+USING (bucket_id = 'room-images');
+

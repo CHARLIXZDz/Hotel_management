@@ -152,6 +152,10 @@ export const translations = {
     adm_btn_checkout: 'ເຊັກເອົາ (Check Out)',
     adm_btn_cancel: 'ຍົກເລີກການຈອງ',
     adm_completed: 'ລາຍການສຳເລັດແລ້ວ',
+    adm_upload_photos: 'ອັບໂຫຼດຮູບພາບຈາກຄອມພິວເຕີ',
+    adm_drag_drop: 'ກົດເພື່ອເລືອກໄຟລ໌ຮູບພາບຈາກເຄື່ອງ (PNG, JPG, WEBP)',
+    adm_uploading: 'ກຳລັງອັບໂຫຼດຮູບ...',
+    adm_manual_url: 'ຫຼື ໃສ່ລິ້ງ URL ຮູບພາບໂດຍກົງ (ທາງເລືອກເສີມ)',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -307,6 +311,10 @@ export const translations = {
     adm_btn_checkout: 'Trả phòng (Check Out)',
     adm_btn_cancel: 'Hủy đặt phòng',
     adm_completed: 'Đã hoàn tất',
+    adm_upload_photos: 'Tải ảnh lên từ thư mục máy tính',
+    adm_drag_drop: 'Nhấn để chọn ảnh từ máy tính của bạn (PNG, JPG, WEBP)',
+    adm_uploading: 'Đang tải ảnh lên...',
+    adm_manual_url: 'Hoặc dán liên kết URL ảnh (Tùy chọn thêm)',
   },
 
   // 3. English
@@ -462,5 +470,9 @@ export const translations = {
     adm_btn_checkout: 'Check Out',
     adm_btn_cancel: 'Cancel Booking',
     adm_completed: 'Completed',
+    adm_upload_photos: 'Upload Photos from Computer',
+    adm_drag_drop: 'Click to browse images from your computer folder (PNG, JPG, WEBP)',
+    adm_uploading: 'Uploading images to cloud...',
+    adm_manual_url: 'Or paste external image URLs (Optional)',
   }
 };
