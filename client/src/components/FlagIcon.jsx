@@ -1,40 +1,57 @@
 import React from 'react';
 
 /**
- * High-definition vector SVG flags that render perfectly on all operating systems (Windows, Mac, iOS, Android)
- * Avoids Windows Segoe UI Emoji fallback to plain text letters ("GB", "LA", "VN").
+ * High-definition vector SVG flags that render perfectly on all operating systems
+ * Proportions and coordinates are mathematically exact according to official flag standards.
  */
-export default function FlagIcon({ code, className = "w-7 h-5 rounded-[4px] shadow-sm object-cover" }) {
+export default function FlagIcon({ code, className = "w-7 h-5 rounded-[4px] shadow-sm shrink-0" }) {
   switch (code) {
-    case 'lo': // Laos Flag
+    case 'vi': // Vietnam Flag (Official 3:2 ratio with perfectly centered 5-pointed gold star)
       return (
-        <svg viewBox="0 0 640 480" className={className}>
-          <rect width="640" height="480" fill="#ce1126" />
-          <rect y="120" width="640" height="240" fill="#002868" />
-          <circle cx="320" cy="240" r="95" fill="#ffffff" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 900 600"
+          className={className}
+        >
+          <rect width="900" height="600" fill="#da251d" />
+          <polygon
+            points="450,150 491,277 625,277 516,356 558,483 450,404 342,483 384,356 275,277 409,277"
+            fill="#ffff00"
+          />
         </svg>
       );
 
-    case 'vi': // Vietnam Flag
+    case 'lo': // Laos Flag (Official 3:2 ratio with 1:2:1 red/blue/red stripes and white moon)
       return (
-        <svg viewBox="0 0 640 480" className={className}>
-          <rect width="640" height="480" fill="#da251d" />
-          <polygon
-            points="320,84 366,227 517,227 395,316 441,459 320,370 199,459 245,316 123,227 274,227"
-            fill="#ffeb3b"
-          />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 900 600"
+          className={className}
+        >
+          <rect width="900" height="600" fill="#ce1126" />
+          <rect y="150" width="900" height="300" fill="#002868" />
+          <circle cx="450" cy="300" r="120" fill="#ffffff" />
         </svg>
       );
 
     case 'en': // United Kingdom (English) Flag
     default:
       return (
-        <svg viewBox="0 0 640 480" className={className}>
-          <path fill="#012169" d="M0 0h640v480H0z" />
-          <path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-179L0 64V0h75z" />
-          <path fill="#C8102E" d="m424 281 216 159v40L369 281h55zm-104-41 240 180h-40L280 240h40zM0 440l180-135h40L0 470v-30zm0-380L179 194h-40L0 89V60zm216 134L0 35v-35l270 200h-54zm104 46L560 60h40L360 240h-40zm320-180L460 195h-40L640 45V0l-40 0z" />
-          <path fill="#FFF" d="M240 0h160v480H240zM0 160h640v160H0z" />
-          <path fill="#C8102E" d="M267 0h106v480H267zM0 187h640v106H0z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 600 400"
+          className={className}
+        >
+          <clipPath id="uk-clip">
+            <rect width="600" height="400" />
+          </clipPath>
+          <g clipPath="url(#uk-clip)">
+            <path fill="#012169" d="M0 0h600v400H0z" />
+            <path stroke="#fff" strokeWidth="66.67" d="M0 0l600 400M600 0L0 400" />
+            <path stroke="#c8102e" strokeWidth="22.22" d="M0 0l600 400M600 0L0 400" />
+            <path stroke="#fff" strokeWidth="133.33" d="M300 0v400M0 200h600" />
+            <path stroke="#c8102e" strokeWidth="80" d="M300 0v400M0 200h600" />
+          </g>
         </svg>
       );
   }

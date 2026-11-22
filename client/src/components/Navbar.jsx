@@ -94,10 +94,10 @@ export default function Navbar() {
           <div className="relative" ref={langRef}>
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="w-12 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm overflow-hidden"
+              className="w-12 h-11 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-sm"
               title="Change Language"
             >
-              <FlagIcon code={currentLang.code} className="w-7 h-5 rounded-[4px] shadow-sm object-cover" />
+              <FlagIcon code={currentLang.code} className="w-7 h-[18px] rounded-[3px] shadow-sm shrink-0" />
             </button>
 
             {/* Dropdown Menu (English, ພາສາລາວ, Tiếng Việt) */}
@@ -120,7 +120,7 @@ export default function Navbar() {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <FlagIcon code={l.code} className="w-6 h-4.5 rounded-[3px] shadow-sm object-cover flex-shrink-0" />
+                          <FlagIcon code={l.code} className="w-6 h-4 rounded-[3px] shadow-sm shrink-0" />
                           <span>{l.label}</span>
                         </div>
                         {isSelected && (
