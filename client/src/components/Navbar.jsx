@@ -12,8 +12,7 @@ import {
   Menu,
   X,
   Sun,
-  Moon,
-  Globe
+  Moon
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -23,7 +22,6 @@ export default function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -33,12 +31,10 @@ export default function Navbar() {
   };
 
   const languages = [
-    { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
-    { code: 'en', label: 'English', flag: '🇬🇧' },
-    { code: 'th', label: 'ไทย', flag: '🇹🇭' },
+    { code: 'vi', flag: '🇻🇳', title: 'Tiếng Việt' },
+    { code: 'en', flag: '🇬🇧', title: 'English' },
+    { code: 'th', flag: '🇹🇭', title: 'ไทย' },
   ];
-
-  const currentLang = languages.find(l => l.code === language) || languages[0];
 
   return (
     <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition shadow-sm">
@@ -74,7 +70,7 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* Actions: Theme Toggle, Language Switcher, User Auth */}
+        {/* Actions: Theme Toggle, Flag-only Language Switcher, User Auth */}
         <div className="hidden md:flex items-center gap-3">
           {/* Theme Switcher Button */}
           <button
@@ -85,37 +81,22 @@ export default function Navbar() {
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
-          {/* Language Switcher Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="flex items-center gap-1.5 py-1.5 px-3 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:border-slate-300 dark:hover:border-slate-600 transition"
-            >
-              <span>{currentLang.flag}</span>
-              <span className="uppercase">{currentLang.code}</span>
-            </button>
-
-            {langDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 py-1.5 z-50 animate-fade-in">
-                {languages.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => {
-                      setLanguage(l.code);
-                      setLangDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium transition text-left ${
-                      language === l.code
-                        ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400 font-bold'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <span>{l.flag}</span>
-                    <span>{l.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+          {/* Flag-only Language Switcher Pill */}
+          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200/80 dark:border-slate-700">
+            {languages.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => setLanguage(l.code)}
+                title={l.title}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-lg transition-all duration-200 ${
+                  language === l.code
+                    ? 'bg-white dark:bg-slate-700 shadow-sm scale-110 ring-1 ring-slate-200 dark:ring-slate-600'
+                    : 'opacity-50 hover:opacity-100 hover:scale-105'
+                }`}
+              >
+                <span className="leading-none">{l.flag}</span>
+              </button>
+            ))}
           </div>
 
           <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
@@ -218,20 +199,22 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-3">
+          {/* Flag-only Switcher for Mobile */}
           <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Language</span>
-            <div className="flex gap-2">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ngôn ngữ / Language</span>
+            <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200/80 dark:border-slate-700">
               {languages.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => setLanguage(l.code)}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition ${
+                  title={l.title}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xl transition-all duration-200 ${
                     language === l.code
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                      ? 'bg-white dark:bg-slate-700 shadow-sm scale-110 ring-1 ring-slate-200 dark:ring-slate-600'
+                      : 'opacity-50 hover:opacity-100'
                   }`}
                 >
-                  {l.flag} {l.code.toUpperCase()}
+                  <span className="leading-none">{l.flag}</span>
                 </button>
               ))}
             </div>
