@@ -99,11 +99,11 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-[#0b1120] flex flex-col md:flex-row transition-colors duration-200">
-      {/* 1. Dark Sidebar: Starts directly at the very top (top:0, full height) */}
-      <aside className="w-full md:w-64 bg-slate-900 dark:bg-[#0c1322] border-r border-slate-800 text-slate-300 p-6 flex flex-col justify-between flex-shrink-0 z-20">
-        <div>
+      {/* 1. Dark Sidebar: Fixed / Sticky 100vh height so bottom buttons stay permanently in place */}
+      <aside className="w-full md:w-64 md:h-screen md:max-h-screen md:sticky md:top-0 bg-slate-900 dark:bg-[#0c1322] border-r border-slate-800 text-slate-300 p-6 flex flex-col justify-between flex-shrink-0 z-30">
+        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-0.5">
           {/* Logo / Brand Header */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-3 mb-8 flex-shrink-0">
             <div className="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-amber-500/20">
               <Hotel className="w-6 h-6" />
             </div>
@@ -116,7 +116,7 @@ export default function AdminLayout() {
           </div>
 
           {/* Navigation Links */}
-          <nav className="space-y-1.5">
+          <nav className="space-y-1.5 flex-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -138,8 +138,8 @@ export default function AdminLayout() {
           </nav>
         </div>
 
-        {/* Bottom Sidebar: Return to Hotel Site & Logout */}
-        <div className="pt-6 border-t border-slate-800/80 mt-6 space-y-3">
+        {/* Bottom Sidebar: Return to Hotel Site & Logout (Fixed permanently at bottom) */}
+        <div className="pt-5 border-t border-slate-800/80 mt-auto flex-shrink-0 space-y-2.5">
           <Link
             to="/"
             className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition group py-1"
