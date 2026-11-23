@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../services/supabase';
@@ -119,12 +120,13 @@ export default function ProfileModal({ isOpen, onClose }) {
     }
   };
 
-  return (
+  return createPortal(
     <div
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 flex items-center justify-center bg-black/70 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 overflow-y-auto p-4 sm:p-6 flex items-center justify-center bg-black/75 backdrop-blur-sm animate-fade-in"
+      style={{ zIndex: 99999 }}
     >
       <div className="relative w-full max-w-md my-auto bg-white dark:bg-[#0f172a] rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800 transition-all">
         {/* Cover Header Banner */}
@@ -286,6 +288,7 @@ export default function ProfileModal({ isOpen, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
