@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Rounded Luxury Gradient Background -->
+  <rect width="64" height="64" rx="16" fill="url(#bg-gradient)" />
+  
+  <defs>
+    <linearGradient id="bg-gradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="60%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Luxury Hotel Building Body -->
+  <path d="M16 52V18C16 16.8954 16.8954 16 18 16H46C47.1046 16 48 16.8954 48 18V52H16Z" fill="#ffffff" />
+  
+  <!-- Crown Header -->
+  <rect x="25" y="12" width="14" height="4" rx="1" fill="url(#gold-grad)" />
+  <circle cx="32" cy="9.5" r="2.5" fill="#fbbf24" />
+
+  <!-- Hotel Windows 3x3 Grid -->
+  <rect x="21" y="21" width="5" height="5" rx="1" fill="#0284c7" />
+  <rect x="29.5" y="21" width="5" height="5" rx="1" fill="#0284c7" />
+  <rect x="38" y="21" width="5" height="5" rx="1" fill="#0284c7" />
+
+  <rect x="21" y="28.5" width="5" height="5" rx="1" fill="#0284c7" />
+  <rect x="29.5" y="28.5" width="5" height="5" rx="1" fill="#0284c7" />
+  <rect x="38" y="28.5" width="5" height="5" rx="1" fill="#0284c7" />
+
+  <rect x="21" y="36" width="5" height="5" rx="1" fill="#0284c7" />
+  <rect x="29.5" y="36" width="5" height="5" rx="1" fill="#0284c7" />
+  <rect x="38" y="36" width="5" height="5" rx="1" fill="#0284c7" />
+
+  <!-- Golden Grand Arch Entrance -->
+  <path d="M28 52V45C28 43.8954 28.8954 43 30 43H34C35.1046 43 36 43.8954 36 45V52H28Z" fill="#f59e0b" />
+  <!-- Canopy Roof -->
+  <path d="M25 44.5H39L37.5 42.5H26.5L25 44.5Z" fill="#d97706" />
+
+  <!-- Foundation Base Line -->
+  <rect x="12" y="52" width="40" height="3" rx="1.5" fill="#ffffff" opacity="0.95" />
+
+  <!-- 5-Star Sparkle -->
+  <path d="M51 7L52.2 10.8L56 12L52.2 13.2L51 17L49.8 13.2L46 12L49.8 10.8L51 7Z" fill="#fde047" />
+</svg>
