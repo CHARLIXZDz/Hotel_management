@@ -17,7 +17,9 @@ import {
   ArrowRight,
   ChevronLeft,
   Send,
-  MessageSquare
+  MessageSquare,
+  Edit3,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function RoomDetail() {
@@ -45,6 +47,7 @@ export default function RoomDetail() {
   const [reviewHoverRating, setReviewHoverRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [isEditingReview, setIsEditingReview] = useState(false);
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -132,30 +135,38 @@ export default function RoomDetail() {
         });
         setReviewComment('');
         const newRev = res.data.data;
-        const newReviews = [
-          {
-            id: newRev?.id || Date.now(),
-            rating: reviewRating,
-            comment: reviewComment,
-            created_at: newRev?.created_at || new Date().toISOString(),
-            user_id: user.id,
-            profiles: {
-              full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Guest',
-              avatar_url: user?.user_metadata?.avatar_url || ''
-            }
-          },
-          ...(room.reviews || [])
-        ];
+        const formattedNewRev = {
+          id: newRev?.id || Date.now(),
+          rating: reviewRating,
+          comment: reviewComment,
+          created_at: newRev?.created_at || new Date().toISOString(),
+          user_id: user.id,
+          profiles: {
+            full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Guest',
+            avatar_url: user?.user_metadata?.avatar_url || ''
+          }
+        };
+
+        const existingIdx = (room.reviews || []).findIndex(r => r.user_id === user.id);
+        let updatedReviews;
+        if (existingIdx >= 0) {
+          updatedReviews = [...room.reviews];
+          updatedReviews[existingIdx] = formattedNewRev;
+        } else {
+          updatedReviews = [formattedNewRev, ...(room.reviews || [])];
+        }
+
         const newAvg = (
-          newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length
+          updatedReviews.reduce((sum, r) => sum + r.rating, 0) / updatedReviews.length
         ).toFixed(1);
 
         setRoom(prev => ({
           ...prev,
-          reviews: newReviews,
+          reviews: updatedReviews,
           avg_rating: parseFloat(newAvg),
-          review_count: newReviews.length
+          review_count: updatedReviews.length
         }));
+        setIsEditingReview(false);
       }
     } catch (err) {
       console.error('Error submitting review:', err);
@@ -314,82 +325,156 @@ export default function RoomDetail() {
                 </div>
               </div>
 
-              {/* Add Comment / Review Form */}
+              {/* Add Comment / Review Form or Already Reviewed Status */}
               <div className="bg-slate-50 dark:bg-slate-800/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
                 {user ? (
-                  <form onSubmit={handleSubmitReview} className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full overflow-hidden bg-primary-600 text-white font-bold flex items-center justify-center text-sm shadow">
-                          {user.user_metadata?.avatar_url ? (
-                            <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                          ) : (
-                            (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()
-                          )}
+                  (() => {
+                    const myExistingReview = room.reviews?.find(r => r.user_id === user.id);
+
+                    if (myExistingReview && !isEditingReview) {
+                      return (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60">
+                            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                              <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+                              <span className="font-bold text-xs sm:text-sm">
+                                {t('detail_already_reviewed')}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setReviewRating(myExistingReview.rating || 5);
+                                setReviewComment(myExistingReview.comment || '');
+                                setIsEditingReview(true);
+                              }}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-primary-500 text-xs font-bold text-primary-600 dark:text-primary-400 transition shadow-sm hover:scale-105 active:scale-95"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                              <span>{t('detail_edit_review')}</span>
+                            </button>
+                          </div>
+
+                          <div className="flex items-start gap-3 pt-1">
+                            <div className="w-9 h-9 rounded-full overflow-hidden bg-primary-600 text-white font-bold flex items-center justify-center text-sm shadow flex-shrink-0">
+                              {user.user_metadata?.avatar_url ? (
+                                <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                              ) : (
+                                (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-semibold text-xs text-slate-900 dark:text-white">
+                                  {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                                </span>
+                                <div className="flex items-center text-amber-400">
+                                  {[...Array(myExistingReview.rating || 5)].map((_, i) => (
+                                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                                  ))}
+                                </div>
+                              </div>
+                              {myExistingReview.comment && (
+                                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                                  "{myExistingReview.comment}"
+                                </p>
+                              )}
+                              <span className="text-[10px] text-slate-400 mt-1.5 block">
+                                {formatDisplayDate(myExistingReview.created_at)}
+                              </span>
+                            </div>
+                          </div>
                         </div>
+                      );
+                    }
+
+                    return (
+                      <form onSubmit={handleSubmitReview} className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full overflow-hidden bg-primary-600 text-white font-bold flex items-center justify-center text-sm shadow">
+                              {user.user_metadata?.avatar_url ? (
+                                <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                              ) : (
+                                (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                                {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                              </p>
+                              <span className="text-[10px] text-slate-400">
+                                {isEditingReview ? t('detail_edit_review') : t('detail_write_review')}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Interactive Star Rating */}
+                          <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setReviewRating(star)}
+                                onMouseEnter={() => setReviewHoverRating(star)}
+                                onMouseLeave={() => setReviewHoverRating(0)}
+                                className="p-1 transition-transform hover:scale-125 focus:outline-none"
+                                title={`${star} Star`}
+                              >
+                                <Star
+                                  className={`w-5 h-5 transition-colors ${
+                                    (reviewHoverRating || reviewRating) >= star
+                                      ? 'fill-amber-400 text-amber-400'
+                                      : 'text-slate-300 dark:text-slate-600'
+                                  }`}
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
                         <div>
-                          <p className="text-xs font-semibold text-slate-900 dark:text-white">
-                            {user.user_metadata?.full_name || user.email?.split('@')[0]}
-                          </p>
-                          <span className="text-[10px] text-slate-400">{t('detail_write_review')}</span>
+                          <textarea
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            placeholder={t('detail_review_placeholder')}
+                            rows={3}
+                            required
+                            className="w-full px-4 py-3 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 dark:text-white placeholder-slate-400 resize-none transition"
+                          />
                         </div>
-                      </div>
 
-                      {/* Interactive Star Rating */}
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
+                        <div className="flex items-center justify-end gap-2.5">
+                          {isEditingReview && (
+                            <button
+                              type="button"
+                              onClick={() => setIsEditingReview(false)}
+                              className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-400 transition"
+                            >
+                              {t('detail_cancel_edit')}
+                            </button>
+                          )}
                           <button
-                            key={star}
-                            type="button"
-                            onClick={() => setReviewRating(star)}
-                            onMouseEnter={() => setReviewHoverRating(star)}
-                            onMouseLeave={() => setReviewHoverRating(0)}
-                            className="p-1 transition-transform hover:scale-125 focus:outline-none"
-                            title={`${star} Star`}
+                            type="submit"
+                            disabled={submittingReview}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md shadow-primary-600/20 transition transform active:scale-95"
                           >
-                            <Star
-                              className={`w-5 h-5 transition-colors ${
-                                (reviewHoverRating || reviewRating) >= star
-                                  ? 'fill-amber-400 text-amber-400'
-                                  : 'text-slate-300 dark:text-slate-600'
-                              }`}
-                            />
+                            {submittingReview ? (
+                              <>
+                                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                <span>{t('detail_review_submitting')}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Send className="w-3.5 h-3.5" />
+                                <span>{isEditingReview ? t('detail_update_review') : t('detail_review_submit')}</span>
+                              </>
+                            )}
                           </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <textarea
-                        value={reviewComment}
-                        onChange={(e) => setReviewComment(e.target.value)}
-                        placeholder={t('detail_review_placeholder')}
-                        rows={3}
-                        required
-                        className="w-full px-4 py-3 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 dark:text-white placeholder-slate-400 resize-none transition"
-                      />
-                    </div>
-
-                    <div className="flex justify-end">
-                      <button
-                        type="submit"
-                        disabled={submittingReview}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md shadow-primary-600/20 transition transform active:scale-95"
-                      >
-                        {submittingReview ? (
-                          <>
-                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>{t('detail_review_submitting')}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-3.5 h-3.5" />
-                            <span>{t('detail_review_submit')}</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
+                        </div>
+                      </form>
+                    );
+                  })()
                 ) : (
                   <div className="text-center py-4">
                     <MessageSquare className="w-8 h-8 text-primary-500 mx-auto mb-2 opacity-80" />
