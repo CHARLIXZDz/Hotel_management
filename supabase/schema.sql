@@ -240,6 +240,38 @@ VALUES
         'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80',
         'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80'
     ]
+),
+(
+    'Presidential Beachfront Pool Villa',
+    'presidential-beachfront-pool-villa',
+    'วิลล่าหรูริมชายหาดระดับพรีเมียม สระว่ายน้ำอินฟินิตี้ส่วนตัวพร้อมวิวทะเลแบบพาโนรามา ศาลาพักผ่อนโอ่อ่า และทางลงสู่หาดทรายขาวส่วนตัวโดยตรง',
+    8500.00,
+    4,
+    '2 King Beds',
+    120,
+    2,
+    ARRAY['Private Infinity Pool', 'Direct Beach Access', 'Oceanfront Sun Deck', 'Personal Butler Service', 'Free High-Speed Wi-Fi', 'Complimentary Floating Breakfast', 'Jacuzzi & Rain Shower', 'Mini Bar & Espresso Machine'],
+    ARRAY[
+        'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80'
+    ]
+),
+(
+    'Romantic Sunset Honeymoon Suite',
+    'romantic-sunset-honeymoon-suite',
+    'ห้องพักสุดโรแมนติกที่ออกแบบเพื่อคู่รักโดยเฉพาะ พร้อมระเบียงชมวิวพระอาทิตย์ตก อ่างจากุซซี่กลางแจ้ง แชมเปญต้อนรับ และการตกแต่งเตียงดอกไม้อันอบอุ่น',
+    4200.00,
+    2,
+    '1 California King Bed',
+    55,
+    5,
+    ARRAY['Sunset Sea View Balcony', 'Outdoor Jacuzzi', 'Complimentary Champagne & Fruit', 'Aromatherapy Bath Salts', 'Free High-Speed Wi-Fi', 'Daily Sunset Cocktail', 'Smart Ambient Lighting', 'En-suite Marble Bathroom'],
+    ARRAY[
+        'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80'
+    ]
 )
 ON CONFLICT (slug) DO NOTHING;
 
