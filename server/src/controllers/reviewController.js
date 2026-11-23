@@ -168,7 +168,7 @@ const getAllReviews = async (req, res) => {
   try {
     const { data: reviews, error } = await supabaseAdmin
       .from('reviews')
-      .select('*, room_types(id, name, slug), profiles(full_name, email)')
+      .select('*, room_types(id, name, slug, images, price_per_night), profiles(full_name, email), bookings(booking_code, check_in, check_out)')
       .order('created_at', { ascending: false });
 
     if (error) throw error;

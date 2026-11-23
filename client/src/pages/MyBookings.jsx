@@ -50,10 +50,10 @@ export default function MyBookings() {
     }
   }, [user]);
 
-  const openReviewModal = (booking) => {
+  const openReviewModal = (booking, existingReview = null) => {
     setSelectedBooking(booking);
-    setRating(5);
-    setComment('');
+    setRating(existingReview?.rating || 5);
+    setComment(existingReview?.comment || '');
     setReviewSuccessMsg('');
     setReviewErrorMsg('');
     setReviewModalOpen(true);
@@ -185,24 +185,28 @@ export default function MyBookings() {
                 </div>
 
                 <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
-                  {b.status === 'checked_out' && (
-                    <>
-                      {b.reviews && b.reviews.length > 0 ? (
-                        <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold">
-                          <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                          {t('mb_reviewed', { stars: b.reviews[0].rating })}
-                        </span>
-                      ) : (
-                        <button
-                          onClick={() => openReviewModal(b)}
-                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-bold text-xs rounded-xl shadow-md transition"
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                          <span>{t('mb_write_review')}</span>
-                        </button>
-                      )}
-                    </>
-                  )}
+                  {b.status === 'checked_out' && (() => {
+                    const existingRev = Array.isArray(b.reviews) ? b.reviews[0] : (b.reviews?.rating ? b.reviews : null);
+                    return existingRev ? (
+                      <button
+                        onClick={() => openReviewModal(b, existingRev)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 rounded-xl text-xs font-bold hover:bg-amber-100 dark:hover:bg-amber-900/40 transition shadow-sm group"
+                        title={existingRev.comment ? `"${existingRev.comment}"` : ''}
+                      >
+                        <Star className="w-4 h-4 fill-amber-400 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <span>{t('mb_reviewed', { stars: existingRev.rating })}</span>
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 underline ml-0.5">({t('detail_edit_review') || 'Edit'})</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => openReviewModal(b)}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-bold text-xs rounded-xl shadow-md transition"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        <span>{t('mb_write_review')}</span>
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             ))}

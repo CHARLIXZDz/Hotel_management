@@ -16,7 +16,8 @@ import {
   Moon,
   LogOut,
   Shield,
-  Settings
+  Settings,
+  MessageSquareQuote
 } from 'lucide-react';
 
 export default function AdminLayout() {
@@ -92,6 +93,7 @@ export default function AdminLayout() {
     { label: t('adm_overview'), path: '/admin', icon: LayoutDashboard },
     { label: t('adm_bookings'), path: '/admin/bookings', icon: CalendarCheck2 },
     { label: t('adm_rooms'), path: '/admin/rooms', icon: BedDouble },
+    { label: t('adm_nav_reviews'), path: '/admin/reviews', icon: MessageSquareQuote },
     { label: t('adm_nav_settings'), path: '/admin/settings', icon: Settings },
   ];
 
