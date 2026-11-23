@@ -29,7 +29,7 @@ export default function LiveSocialProof() {
             guestName: b.guest_name,
             roomName: b.room_types?.name || 'Grand Horizon Suite',
             createdAt: b.created_at,
-            avatar: DEFAULT_AVATARS[i % DEFAULT_AVATARS.length]
+            avatar: b.guest_avatar || b.avatar_url || DEFAULT_AVATARS[i % DEFAULT_AVATARS.length]
           }));
           setBookingsList(mapped);
         }

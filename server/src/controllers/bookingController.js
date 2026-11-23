@@ -151,7 +151,25 @@ const getAllBookings = async (req, res) => {
 
     if (error) throw error;
 
-    return res.json({ success: true, data: bookings || [] });
+    let enrichedBookings = bookings || [];
+    try {
+      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const userMap = new Map();
+      (authUsers?.users || []).forEach(u => {
+        if (u.user_metadata?.avatar_url) {
+          userMap.set(u.id, u.user_metadata.avatar_url);
+        }
+      });
+      enrichedBookings = (bookings || []).map(b => ({
+        ...b,
+        guest_avatar: userMap.get(b.user_id) || null,
+        avatar_url: userMap.get(b.user_id) || null
+      }));
+    } catch (authErr) {
+      console.error('getAllBookings auth avatar error:', authErr);
+    }
+
+    return res.json({ success: true, data: enrichedBookings });
   } catch (err) {
     console.error('getAllBookings error:', err);
     return res.status(500).json({ success: false, message: 'Failed to fetch bookings', error: err.message });
@@ -193,13 +211,31 @@ const getRecentBookingsForSocialProof = async (req, res) => {
   try {
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
-      .select('id, guest_name, created_at, room_types(name)')
+      .select('id, guest_name, created_at, user_id, room_types(name)')
       .order('created_at', { ascending: false })
       .limit(8);
 
     if (error) throw error;
 
-    return res.json({ success: true, data: bookings || [] });
+    let enrichedBookings = bookings || [];
+    try {
+      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const userMap = new Map();
+      (authUsers?.users || []).forEach(u => {
+        if (u.user_metadata?.avatar_url) {
+          userMap.set(u.id, u.user_metadata.avatar_url);
+        }
+      });
+      enrichedBookings = (bookings || []).map(b => ({
+        ...b,
+        guest_avatar: userMap.get(b.user_id) || null,
+        avatar_url: userMap.get(b.user_id) || null
+      }));
+    } catch (authErr) {
+      console.error('getRecentBookingsForSocialProof auth avatar error:', authErr);
+    }
+
+    return res.json({ success: true, data: enrichedBookings });
   } catch (err) {
     console.error('getRecentBookingsForSocialProof error:', err);
     return res.status(500).json({ success: false, message: 'Failed to fetch recent bookings' });

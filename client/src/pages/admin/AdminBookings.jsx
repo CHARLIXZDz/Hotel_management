@@ -160,10 +160,29 @@ export default function AdminBookings() {
 
                 {/* Guest Contact Details */}
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
-                  <span className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
-                    <User className="w-3.5 h-3.5 text-slate-400" />
-                    {b.guest_name}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-amber-500 to-primary-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm flex-shrink-0">
+                      {b.guest_avatar || b.avatar_url ? (
+                        <img
+                          src={b.guest_avatar || b.avatar_url}
+                          alt={b.guest_name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.style.display = 'none';
+                            if (e.target.parentElement) {
+                              e.target.parentElement.innerText = (b.guest_name || 'G')[0].toUpperCase();
+                            }
+                          }}
+                        />
+                      ) : (
+                        (b.guest_name || 'G')[0].toUpperCase()
+                      )}
+                    </div>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {b.guest_name}
+                    </span>
+                  </div>
                   <span className="flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
                     {b.guest_phone}

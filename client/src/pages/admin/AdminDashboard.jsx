@@ -128,7 +128,31 @@ export default function AdminDashboard() {
                 stats.recentBookings.map((b) => (
                   <tr key={b.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition">
                     <td className="py-3 px-4 font-mono font-bold text-slate-900 dark:text-white">{b.booking_code}</td>
-                    <td className="py-3 px-4">{b.guest_name}</td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-amber-500 to-primary-600 text-white font-bold flex items-center justify-center text-xs shadow-sm flex-shrink-0">
+                          {b.guest_avatar || b.avatar_url ? (
+                            <img
+                              src={b.guest_avatar || b.avatar_url}
+                              alt={b.guest_name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.display = 'none';
+                                if (e.target.parentElement) {
+                                  e.target.parentElement.innerText = (b.guest_name || 'G')[0].toUpperCase();
+                                }
+                              }}
+                            />
+                          ) : (
+                            (b.guest_name || 'G')[0].toUpperCase()
+                          )}
+                        </div>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">
+                          {b.guest_name}
+                        </span>
+                      </div>
+                    </td>
                     <td className="py-3 px-4">{b.room_types?.name}</td>
                     <td className="py-3 px-4 text-xs font-medium text-slate-700 dark:text-slate-300">
                       {formatDateDDMMYY(b.check_in)} → {formatDateDDMMYY(b.check_out)}

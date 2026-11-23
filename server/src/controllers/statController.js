@@ -36,9 +36,27 @@ const getDashboardStats = async (req, res) => {
     // 3. Recent 5 bookings
     const { data: recentBookings } = await supabaseAdmin
       .from('bookings')
-      .select('id, booking_code, guest_name, check_in, check_out, total_price, status, room_types(name)')
+      .select('id, booking_code, guest_name, check_in, check_out, total_price, status, user_id, room_types(name)')
       .order('created_at', { ascending: false })
       .limit(5);
+
+    let enrichedRecentBookings = recentBookings || [];
+    try {
+      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const userMap = new Map();
+      (authUsers?.users || []).forEach(u => {
+        if (u.user_metadata?.avatar_url) {
+          userMap.set(u.id, u.user_metadata.avatar_url);
+        }
+      });
+      enrichedRecentBookings = (recentBookings || []).map(b => ({
+        ...b,
+        guest_avatar: userMap.get(b.user_id) || null,
+        avatar_url: userMap.get(b.user_id) || null
+      }));
+    } catch (authErr) {
+      console.error('Error fetching user avatars for dashboard stats:', authErr);
+    }
 
     return res.json({
       success: true,
@@ -51,7 +69,7 @@ const getDashboardStats = async (req, res) => {
         totalRevenue,
         pendingRevenue,
         totalRoomsInventory,
-        recentBookings: recentBookings || []
+        recentBookings: enrichedRecentBookings
       }
     });
   } catch (err) {
