@@ -226,6 +226,16 @@ export const translations = {
     rev_submit_btn: 'ສົ່ງຄວາມຄິດເຫັນ',
     rev_login_prompt: 'ເຂົ້າສູ່ລະບົບເພື່ອຂຽນຄວາມຄິດເຫັນ ແລະ ໃຫ້ຄະແນນຫ້ອງພັກ',
     rev_success_msg: 'ສົ່ງຄວາມຄິດເຫັນຮຽບຮ້ອຍແລ້ວ! ຂອບໃຈຫຼາຍໆ',
+
+    pm_title: 'ແກ້ໄຂໂປຣໄຟລ໌ & ຮູບປະຈຳຕົວ',
+    pm_cancel: 'ຍົກເລີກ',
+    pm_save: 'ບັນທຶກການປ່ຽນແປງ',
+    pm_upload_btn: 'ເລືອກຮູບຈາກຄອມພິວເຕີ',
+    pm_url_label: 'ຫຼື ວາງລິ້ງ URL ຮູບພາບໂດຍກົງ',
+    pm_uploading: 'ກຳລັງອັບໂຫຼດ...',
+    pm_saving: 'ກຳລັງບັນທຶກ...',
+    pm_success_title: 'ອັບເດດສຳເລັດແລ້ວ!',
+    pm_success_msg: 'ຮູບໂປຣໄຟລ໌ ແລະ ຂໍ້ມູນຂອງທ່ານໄດ້ຖືກບັນທຶກແລ້ວ',
   },
 
   // 2. Vietnamese (Tiếng Việt)
@@ -455,6 +465,16 @@ export const translations = {
     rev_submit_btn: 'Gửi bình luận',
     rev_login_prompt: 'Đăng nhập để viết bình luận và đánh giá phòng',
     rev_success_msg: 'Đã gửi bình luận thành công! Cảm ơn bạn',
+
+    pm_title: 'Hồ sơ & Ảnh đại diện',
+    pm_cancel: 'Hủy bỏ',
+    pm_save: 'Lưu thay đổi',
+    pm_upload_btn: 'Chọn ảnh từ máy tính',
+    pm_url_label: 'Hoặc dán URL ảnh trực tiếp',
+    pm_uploading: 'Đang tải ảnh...',
+    pm_saving: 'Đang lưu...',
+    pm_success_title: 'Cập nhật thành công!',
+    pm_success_msg: 'Ảnh đại diện và thông tin tài khoản đã được lưu.',
   },
 
   // 3. English
@@ -684,5 +704,15 @@ export const translations = {
     rev_submit_btn: 'Submit Review',
     rev_login_prompt: 'Sign in to leave a review and comment on this room',
     rev_success_msg: 'Review submitted successfully! Thank you',
+
+    pm_title: 'Profile & Avatar Settings',
+    pm_cancel: 'Cancel',
+    pm_save: 'Save Changes',
+    pm_upload_btn: 'Upload Photo from Device',
+    pm_url_label: 'Or paste image URL directly',
+    pm_uploading: 'Uploading...',
+    pm_saving: 'Saving...',
+    pm_success_title: 'Updated Successfully!',
+    pm_success_msg: 'Your profile and avatar have been saved.',
   }
 };
